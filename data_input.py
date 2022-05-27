@@ -289,25 +289,22 @@ class datainputApp(HydraHeadApp):
                                                '用法用量': drug_use, '时间': drug_start.strftime('%Y-%m-%d'), '疗程': drug_dur,
                                                '效果': drug_other, '医疗机构': drug_hospital,
                                                '录入时间': datetime.datetime.now().strftime("%Y-%m-%d-%H:%M")})
-                        st.experimental_rerun()
                     if i == '保守-理疗':
                         get_data_pmh().append({'既往诊断': dn, '患病时长（年）': dn_time, '治疗方式': i, '名称': therapy_name,
                                                '时间': therapy_time.strftime('%Y-%m-%d'), '疗程': therapy_dur,
                                                '效果': therapy_effect, '医疗机构': therapy_hospital,
                                                '录入时间': datetime.datetime.now().strftime("%Y-%m-%d-%H:%M")})
-                        st.experimental_rerun()
                     if i == '⼿术-开放':
                         get_data_pmh().append({'既往诊断': dn, '患病时长（年）': dn_time, '治疗方式': i, '名称': surgery_name,
                                                '时间': surgery_time.strftime('%Y-%m-%d'), '效果': surgery_effect,
                                                '医疗机构': surgery_hospital,
                                                '录入时间': datetime.datetime.now().strftime("%Y-%m-%d-%H:%M")})
-                        st.experimental_rerun()
                     if i == '⼿术-微创':
                         get_data_pmh().append({'既往诊断': dn, '患病时长（年）': dn_time, '治疗方式': i, '名称': microsurgery_name,
                                                '时间': microsurgery_time.strftime('%Y-%m-%d'), '效果': microsurgery_effect,
                                                '医疗机构': microsurgery_hospital,
                                                '录入时间': datetime.datetime.now().strftime("%Y-%m-%d-%H:%M")})
-                        st.experimental_rerun()
+                st.experimental_rerun()
             df = pd.DataFrame(get_data_pmh(), columns=['既往诊断', '患病时长（年）', '治疗方式', '名称', '时间', '疗程', '效果',
                                                        '医疗机构', '用法用量', '录入时间'])
             df = df.where(df.notnull(), '')
