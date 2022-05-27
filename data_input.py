@@ -157,7 +157,7 @@ class datainputApp(HydraHeadApp):
 
             if '保守-药物' in tm:
                 my_form.markdown('<p class="label-font2">保守-药物</p>', unsafe_allow_html=True)
-                ce, c1, ce, c2, ce, c3, ce = my_form.columns([0.07, 1, 0.07, 1, 0.07, 1, 0.07])
+                c1, ce, c2, ce, c3, ce = my_form.columns([1, 0.07, 1, 0.07, 1, 0.07])
                 drug_name = c1.text_input('药品名称', key='drug_name')
                 drug_use = c2.text_input('用法用量', key='drug_use')
                 drug_start = c3.date_input('开始时间', datetime.date(2022, 5, 26), key='durg_time')
@@ -166,7 +166,7 @@ class datainputApp(HydraHeadApp):
 
             if '保守-理疗' in tm:
                 my_form.markdown('<p class="label-font2">保守-理疗</p>', unsafe_allow_html=True)
-                ce, c1, ce, c2, ce, c3, ce = my_form.columns([0.07, 1, 0.07, 1, 0.07, 1, 0.07])
+                c1, ce, c2, ce, c3, ce = my_form.columns([1, 0.07, 1, 0.07, 1, 0.07])
                 therapy_name = c1.text_input('理疗项目', key='therapy_name')
                 therapy_time = c2.date_input('手术时间', datetime.date(2022, 5, 26), key='therapy_time')
                 therapy_dur = c3.text_input('疗程', key='therapy_dur')
@@ -174,14 +174,14 @@ class datainputApp(HydraHeadApp):
 
             if '⼿术-开放' in tm:
                 my_form.markdown('<p class="label-font2">⼿术-开放</p>', unsafe_allow_html=True)
-                ce, c1, ce, c2, ce, c3, ce = my_form.columns([0.07, 1, 0.07, 1, 0.07, 1, 0.07])
+                c1, ce, c2, ce, c3, ce = my_form.columns([1, 0.07, 1, 0.07, 1, 0.07])
                 surgery_name = c1.text_input('术式', key='surgery_name')
                 surgery_time = c2.date_input('手术时间', datetime.date(2022, 5, 26), key='surgery_time')
                 surgery_effect = c3.text_input('手术效果', key='surgery_effect')
 
             if '⼿术-微创' in tm:
                 my_form.markdown('<p class="label-font2">⼿术-微创</p>', unsafe_allow_html=True)
-                ce, c1, ce, c2, ce, c3, ce = my_form.columns([0.07, 1, 0.07, 1, 0.07, 1, 0.07])
+                c1, ce, c2, ce, c3, ce = my_form.columns([1, 0.07, 1, 0.07, 1, 0.07])
                 microsurgery_name = c1.text_input('术式', key='surgery_name')
                 microsurgery_time = c2.date_input('手术时间', datetime.date(2022, 5, 26), key='surgery_time')
                 microsurgery_effect = c3.text_input('手术效果', key='surgery_effect')
