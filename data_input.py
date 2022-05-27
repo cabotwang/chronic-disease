@@ -186,8 +186,7 @@ class datainputApp(HydraHeadApp):
                 microsurgery_time = c2.date_input('手术时间', datetime.date(2022, 5, 26), key='surgery_time')
                 microsurgery_effect = c3.text_input('手术效果', key='surgery_effect')
 
-            ce, c1, ce, c2, ce, c3, ce = my_form.columns([0.07, 1, 0.07, 1, 0.07, 1, 0.07])
-            submit_image = c1.button('增加', key='phm')
+            submit_image = my_form.button('增加', key='phm')
             if submit_image:
                 for i in tm:
                     if i == '保守-药物':
