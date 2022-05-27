@@ -119,7 +119,7 @@ class datainputApp(HydraHeadApp):
 
             st.markdown('<p class="label-font">影像学检查</p>', unsafe_allow_html=True)
             my_form = st.expander('增加影像学检查结果')
-            ce, c1, ce, c2, ce, c3, ce = my_form.columns([0.07, 1, 0.07, 1, 0.07, 1, 0.07])
+            c1, ce, c2, ce, c3, ce = my_form.columns([1, 0.07, 1, 0.07, 1, 0.07])
             image = c1.selectbox('影像学检查类型', ('X光', 'CT', 'MRI'), key='name')
             image_time = c2.date_input('最近一次检查时间', datetime.date(2022, 5, 26), key='time')
             result = c3.multiselect('检查结果', ('腰椎间盘退变、损伤', '椎间盘局限性突出', '压迫神经根、⻢尾'), key='result')
@@ -150,7 +150,7 @@ class datainputApp(HydraHeadApp):
 
             st.markdown('<p class="label-font">既往病史</p>', unsafe_allow_html=True)
             my_form = st.expander('增加既往症信息')
-            ce, c1, ce, c2, ce, c3, ce = my_form.columns([0.07, 1, 0.07, 1, 0.07, 1, 0.07])
+            c1, ce, c2, ce, c3, ce = my_form.columns([1, 0.07, 1, 0.07, 1, 0.07])
             dn = c1.text_input('既往诊断', key='name')
             dn_time = c2.text_input('患病时长', key='time')
             tm = c3.multiselect('治疗方式', ('保守-药物', '保守-理疗', '⼿术-微创', '⼿术-开放'))
