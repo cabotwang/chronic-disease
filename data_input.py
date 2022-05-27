@@ -43,7 +43,7 @@ class datainputApp(HydraHeadApp):
         # 个人基础信息
         with st.container():
             st.markdown('<p class="label-font">个人基础信息</p>', unsafe_allow_html=True)
-            ce, c1, ce, c2, ce, c3, ce, c4, ce = st.columns([0.07, 1, 0.07, 1, 0.07, 2.5, 0.07, 3, 0.07])
+            c1, ce, c2, ce, c3, ce, c4 = st.columns([1, 0.07, 1, 0.07, 2.5, 0.07, 3])
             name = c1.text_input('姓名')
             sex = c2.selectbox('性别', ('男', '女', '其他'))
             phone = c3.text_input('联系方式')
@@ -58,13 +58,12 @@ class datainputApp(HydraHeadApp):
 
             option1 = []
             st.markdown('<p class="label-font">症状体征</p>', unsafe_allow_html=True)
-            ce, c1, ce = st.columns([0.01, 1.1, 0.01])
-            options = c1.multiselect('您是否患有以下症状（可多选）', ('腰痛', '神经根性疼痛', '下肢⿇⽊⽆⼒', '⼤⼩便功能障碍', '其他：'))
+            options = st.multiselect('您是否患有以下症状（可多选）', ('腰痛', '神经根性疼痛', '下肢⿇⽊⽆⼒', '⼤⼩便功能障碍', '其他：'))
             if options:
                 with st.expander('详细信息', expanded=True):
                     if '其他：' in options:
                         st.markdown('<p class="label-font2">其他</p>', unsafe_allow_html=True)
-                        ce, c1, ce, c2, ce, c3, ce = st.columns([0.02, 1, 0.07, 1, 0.07, 1, 0.07])
+                        c1, ce, c2, ce, c3 = st.columns([1, 0.07, 1, 0.07, 1])
                         name = c1.text_input('症状名称', key='other')
                         degree = c2.selectbox('程度', ('轻', '中', '重'), key='degree')
                         paintype = c3.selectbox('类型', ('间断', '持续'), key='other')
@@ -74,7 +73,7 @@ class datainputApp(HydraHeadApp):
                             option1.append(i)
                     for each in option1:
                         st.markdown('<p class="label-font2">%s</p>' % each, unsafe_allow_html=True)
-                        ce, c1, ce, c2, ce, c3, ce = st.columns([0.02, 1, 0.07, 1, 0.07, 1, 0.07])
+                        c1, ce, c2, ce, c3 = st.columns([1, 0.07, 1, 0.07, 1])
                         degree = c1.selectbox('程度', ('轻', '中', '重'), key='%sdegree' % each)
                         paintype = c2.selectbox('类型', ('间断', '持续'), key=each)
                         time = c3.text_input('持续时间（小时）', key=each)
@@ -104,7 +103,7 @@ class datainputApp(HydraHeadApp):
         with st.container():
             st.markdown('<p class="label-font">体格检查</p>', unsafe_allow_html=True)
             st.write('是否进行以下体格检查')
-            ce, c1, ce, c2, ce, c3, ce, c4, ce, c5, ce = st.columns([0.07, 1, 0.07, 1, 0.07, 1, 0.07, 1, 0.07, 1, 0.07])
+            c1, ce, c2, ce, c3, ce, c4, ce, c5, ce = st.columns([1, 0.07, 1, 0.07, 1, 0.07, 1, 0.07, 1, 0.07])
             task1 = c1.selectbox('直腿抬⾼试验', ('未进行', '阳性', '阴性'), key='1')
             task2 = c2.selectbox('直腿抬⾼加强试验', ('未进行', '阳性', '阴性'), key='2')
             task3 = c3.selectbox('健侧直腿抬⾼试验', ('未进行', '阳性', '阴性'), key='3')
@@ -150,14 +149,14 @@ class datainputApp(HydraHeadApp):
 
             st.markdown('<p class="label-font">既往病史</p>', unsafe_allow_html=True)
             my_form = st.expander('增加既往症信息')
-            c1, ce, c2, ce, c3, ce = my_form.columns([1, 0.07, 1, 0.07, 1, 0.07])
+            c1, ce, c2, ce, c3 = my_form.columns([1, 0.07, 1, 0.07, 1])
             dn = c1.text_input('既往诊断', key='name')
             dn_time = c2.text_input('患病时长', key='time')
             tm = c3.multiselect('治疗方式', ('保守-药物', '保守-理疗', '⼿术-微创', '⼿术-开放'))
 
             if '保守-药物' in tm:
                 my_form.markdown('<p class="label-font2">保守-药物</p>', unsafe_allow_html=True)
-                c1, ce, c2, ce, c3, ce = my_form.columns([1, 0.07, 1, 0.07, 1, 0.07])
+                c1, ce, c2, ce, c3 = my_form.columns([1, 0.07, 1, 0.07, 1])
                 drug_name = c1.text_input('药品名称', key='drug_name')
                 drug_use = c2.text_input('用法用量', key='drug_use')
                 drug_start = c3.date_input('开始时间', datetime.date(2022, 5, 26), key='durg_time')
@@ -166,7 +165,7 @@ class datainputApp(HydraHeadApp):
 
             if '保守-理疗' in tm:
                 my_form.markdown('<p class="label-font2">保守-理疗</p>', unsafe_allow_html=True)
-                c1, ce, c2, ce, c3, ce = my_form.columns([1, 0.07, 1, 0.07, 1, 0.07])
+                c1, ce, c2, ce, c3 = my_form.columns([1, 0.07, 1, 0.07, 1])
                 therapy_name = c1.text_input('理疗项目', key='therapy_name')
                 therapy_time = c2.date_input('手术时间', datetime.date(2022, 5, 26), key='therapy_time')
                 therapy_dur = c3.text_input('疗程', key='therapy_dur')
@@ -174,14 +173,14 @@ class datainputApp(HydraHeadApp):
 
             if '⼿术-开放' in tm:
                 my_form.markdown('<p class="label-font2">⼿术-开放</p>', unsafe_allow_html=True)
-                c1, ce, c2, ce, c3, ce = my_form.columns([1, 0.07, 1, 0.07, 1, 0.07])
+                c1, ce, c2, ce, c3 = my_form.columns([1, 0.07, 1, 0.07, 1])
                 surgery_name = c1.text_input('术式', key='surgery_name')
                 surgery_time = c2.date_input('手术时间', datetime.date(2022, 5, 26), key='surgery_time')
                 surgery_effect = c3.text_input('手术效果', key='surgery_effect')
 
             if '⼿术-微创' in tm:
                 my_form.markdown('<p class="label-font2">⼿术-微创</p>', unsafe_allow_html=True)
-                c1, ce, c2, ce, c3, ce = my_form.columns([1, 0.07, 1, 0.07, 1, 0.07])
+                c1, ce, c2, ce, c3 = my_form.columns([1, 0.07, 1, 0.07, 1])
                 microsurgery_name = c1.text_input('术式', key='surgery_name')
                 microsurgery_time = c2.date_input('手术时间', datetime.date(2022, 5, 26), key='surgery_time')
                 microsurgery_effect = c3.text_input('手术效果', key='surgery_effect')
