@@ -24,8 +24,9 @@ class datainputApp(HydraHeadApp):
             )
             return selection
 
-        for line in open('style.css', encoding='utf-8'):
-            st.markdown(f'<style>{line}</style>', unsafe_allow_html=True)
+        #
+        # for line in open('style.css', encoding='utf-8'):
+        #     st.markdown(f'<style>{line}</style>', unsafe_allow_html=True)
 
         # 个人基础信息
         with st.container():
@@ -45,70 +46,86 @@ class datainputApp(HydraHeadApp):
 
             option1 = []
             st.markdown('<p class="label-font">症状体征</p>', unsafe_allow_html=True)
-
             options = st.multiselect('您是否患有以下症状（可多选）', ('腰痛', '神经根性疼痛', '下肢麻木无力', '⼤⼩便功能障碍', '其他：'))
             st.write()
             if options:
                 with st.expander('详细信息', expanded=True):
+                    names = locals()
                     if '其他：' in options:
                         st.markdown('<p class="label-font2">其他</p>', unsafe_allow_html=True)
                         c1, ce, c2, ce, c3 = st.columns([1, 0.07, 1, 0.07, 1])
                         name = c1.text_input('症状名称', key='other')
                         degree = c2.selectbox('程度', ('轻', '中', '重'), key='degree')
-                        paintype = c3.selectbox('类型', ('间断', '持续'), key='other')
-                        time = c1.text_input('持续时间（周）', key='other')
+                        paintype = c3.selectbox('类型', ('持续', '间断'), index=1, key='other')
+                        if paintype == '间断':
+                            duration = c1.text_input('平均发作时长（小时）', key='duration', help='可填写单一数值，如为范围区间，可用“-”相隔')
+                            incidence = c2.text_input('发作频次（次/周）', key='incidence')
+                        else:
+                            chronic_pain_time = c1.text_input('持续时间（周）', key='other')
                     for i in options:
                         if i != '其他：':
                             option1.append(i)
+                    counter = 0
                     for each in option1:
                         st.markdown('<p class="label-font2">%s</p>' % each, unsafe_allow_html=True)
                         c1, ce, c2, ce, c3 = st.columns([1, 0.07, 1, 0.07, 1])
-                        degree = c1.selectbox('程度', ('轻', '中', '重'), key='%sdegree' % each)
-                        paintype = c2.selectbox('类型', ('间断', '持续'), key=each)
-                        # time = c3.text_input('持续时间（小时）', key=each)
-                        if paintype == '间断':
-                            avgtime = c3.text_input('平均发作时长（小时）', key='%s_avgtime' % each,
-                                                    help='可填写单一数值，如为范围区间，可用“-”相隔')
-                            incidence = c1.text_input('发作频次（次/周）', key='%s_incidence' % each)
+                        names['%s_degree' % counter] = c1.selectbox('程度', ('轻', '中', '重'), key='%sdegree' % each)
+                        names['%s_type' % counter] = c2.selectbox('类型', ('持续', '间断'), key=each)
+                        if names['%s_type' % counter] == '间断':
+                            names['%s_duration' % counter] = c3.text_input('平均发作时长（小时）', key='%s_duration' % each,
+                                                                           help='可填写单一数值，如为范围区间，可用“-”相隔')
+                            names['%s_incidence' % counter] = c1.text_input('发作频次（次/周）', key='%s_incidence' % each)
                         else:
-                            time = c3.text_input('持续时间（小时）', key=each)
+                            names['%s_chronicpaintime' % counter] = c3.text_input('持续时间（周）', key=each)
+                            counter += 1
                     submit_physical = st.button('确认')
                     if submit_physical:
                         if '其他：' in options:
                             try:
-                                get_data_sym().append({'症状': name, '程度': degree, '类型': paintype, '持续时间（周）': time,
-                                                       '平均发作时长（小时）': avgtime, '发作频次（次/周）': incidence,
+                                get_data_sym().append({'症状': name, '程度': degree, '类型': paintype,
+                                                       '平均发作时长（小时）': duration, '发作频次（次/周）': incidence,
                                                        '录入时间': datetime.datetime.now().strftime("%Y-%m-%d-%H:%M")})
                             except UnboundLocalError:
-                                get_data_sym().append({'症状': name, '程度': degree, '类型': paintype, '持续时间（周）': time,
-                                                       '录入时间': datetime.datetime.now().strftime("%Y-%m-%d-%H:%M")})
+                                get_data_sym().append(
+                                    {'症状': name, '程度': degree, '类型': paintype, '持续时间（周）': chronic_pain_time,
+                                     '录入时间': datetime.datetime.now().strftime("%Y-%m-%d-%H:%M")})
+                        counter = 0
                         for each in option1:
                             try:
-                                get_data_sym().append({'症状': each, '程度': degree, '类型': paintype,
-                                                       '平均发作时长（小时）': avgtime, '发作频次（次/周）': incidence,
-                                                       '录入时间': datetime.datetime.now().strftime("%Y-%m-%d-%H:%M")})
-                                st.experimental_rerun()
-                            except UnboundLocalError:
-                                get_data_sym().append({'症状': each, '程度': degree, '类型': paintype, '持续时间（周）': time,
-                                                       '录入时间': datetime.datetime.now().strftime("%Y-%m-%d-%H:%M")})
-                                st.experimental_rerun()
-                    df = pd.DataFrame(get_data_sym(), columns=['症状', '程度', '类型', '持续时间（周）', '平均发作时长（小时）',
-                                                               '发作频次（次/周）', '录入时间'])
-                    df.index = df.index + 1
-                    df = df.where(df.notnull(), '')
-                if len(df) > 0:
-                    selected = interactive_table(df)
-                    c1, ce, c2, ce = st.columns([1, 0.07, 1, 10])
-                    delete = c1.button('删除所选信息', key='symptom_delete')
-                    clear = c2.button('清除列表', key='symptom_clear')
-                    if delete:
-                        get_data_sym().remove(selected["selected_rows"][0])
+                                get_data_sym().append(
+                                    {'症状': each, '程度': names['%s_degree' % counter], '类型': names['%s_type' % counter],
+                                     '平均发作时长（小时）': names['%s_duration' % counter],
+                                     '发作频次（次/周）': names['%s_incidence' % counter],
+                                     '录入时间': datetime.datetime.now().strftime("%Y-%m-%d-%H:%M")})
+                            except:
+                                get_data_sym().append(
+                                    {'症状': each, '程度': names['%s_degree' % counter], '类型': names['%s_type' % counter],
+                                     '持续时间（周）': names['%s_chronicpaintime' % counter],
+                                     '录入时间': datetime.datetime.now().strftime("%Y-%m-%d-%H:%M")})
+                            counter += 1
                         st.experimental_rerun()
-                    if clear:
-                        get_data_sym().clear()
-                        st.experimental_rerun()
+            df = pd.DataFrame(get_data_sym(), columns=['症状', '程度', '类型', '持续时间（周）', '平均发作时长（小时）',
+                                                       '发作频次（次/周）', '录入时间'])
+            df.index = df.index + 1
+            df = df.where(df.notnull(), '')
+            if len(df) > 0:
+                selected = interactive_table(df)
+                c1, ce, c2, ce = st.columns([1, 0.07, 1, 10])
+                delete = c1.button('删除所选信息', key='symptom_delete')
+                clear = c2.button('清除列表', key='symptom_clear')
+                if delete:
+                    print(get_data_sym())
+                    print(selected["selected_rows"][0])
+                    for i in get_data_sym():
+                        if set(i.items()).issubset(selected["selected_rows"][0].items()):
+                            get_data_sym().remove(i)
+                    st.experimental_rerun()
+                if clear:
+                    get_data_sym().clear()
+                    st.experimental_rerun()
         st.markdown('')
 
+        # 体格检查
         with st.container():
             @st.cache(allow_output_mutation=True)
             def get_data_ph():
@@ -148,6 +165,7 @@ class datainputApp(HydraHeadApp):
                     st.experimental_rerun()
         st.markdown('')
 
+        # 影像学检查
         with st.container():
             @st.cache(allow_output_mutation=True)
             def get_data_image():
@@ -185,7 +203,9 @@ class datainputApp(HydraHeadApp):
                 if clear:
                     get_data_image().clear()
                     st.experimental_rerun()
+        st.markdown('')
 
+        # 既往病史
         with st.container():
             @st.cache(allow_output_mutation=True)
             def get_data_pmh():
@@ -207,7 +227,7 @@ class datainputApp(HydraHeadApp):
                 my_form.markdown('<p class="label-font2">保守-药物</p>', unsafe_allow_html=True)
                 c1, ce, c2, ce, c3 = my_form.columns([1, 0.07, 1, 0.07, 1])
                 drug_name = c1.text_input('药品名称', key='drug_name')
-                drug_use = c2.text_input('用法用量', key='drug_use')
+                drug_use = c2.text_input('用法用量', key='drug_use', help='需填写剂量、单位、应用频次、给药途径，如：600 mg，三次每日，口服')
                 drug_start = c3.date_input('开始时间', datetime.date(2022, 5, 26), key='durg_time')
                 drug_dur = c1.text_input('疗程', key='drug_dur')
                 drug_other = c2.text_input('药物效果', key='drug_effect')
@@ -290,23 +310,26 @@ class datainputApp(HydraHeadApp):
             df = df.where(df.notnull(), '')
             df.index = df.index + 1
 
-            if len(df)>0:
+            if len(df) > 0:
                 selected = interactive_table(df)
                 c1, ce, c2, ce = st.columns([1, 0.07, 1, 10])
                 delete = c1.button('删除所选信息', key='pmh_delete')
                 clear = c2.button('清除列表', key='pmh_clear')
                 if delete:
-                    get_data_pmh().remove(selected["selected_rows"][0])
+                    for i in get_data_pmh():
+                        if set(i.items()).issubset(selected["selected_rows"][0].items()):
+                            get_data_pmh().remove(i)
                     st.experimental_rerun()
                 if clear:
                     get_data_pmh().clear()
                     st.experimental_rerun()
+        st.markdown('')
 
         final_submit = st.button('提交')
         if final_submit:
+            # info = pd.DataFrame(db_info.fetch().items)
             deta = Deta(st.secrets["deta_key"])
             db_info = deta.Base("person_info")
-            info = pd.DataFrame(db_info.fetch().items)
             db_symptom = deta.Base("person_symptom")
             db_image = deta.Base("imaging")
             db_physical = deta.Base("physical_test")
@@ -314,8 +337,8 @@ class datainputApp(HydraHeadApp):
             if '' in [name, sex, phone]:
                 st.error('无法提交：基础信息不完整')
             else:
-                if id not in info['身份证号'].tolist():
-                    db_info.put({"姓名": name, '性别': sex, '电话': phone, "身份证号": id})
+                # if id not in info['身份证号'].tolist():
+                db_info.put({"姓名": name, '性别': sex, '电话': phone, "身份证号": id})
                 for sym in get_data_sym():
                     sym.update({"身份证号": id})
                     db_symptom.put(sym)
@@ -328,4 +351,4 @@ class datainputApp(HydraHeadApp):
                 for phy in get_data_ph():
                     phy.update({"身份证号": id})
                     db_physical.put(phy)
-                st.balloons()
+                st.success('提交成功')
