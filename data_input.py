@@ -24,39 +24,17 @@ class datainputApp(HydraHeadApp):
             )
             return selection
 
-        # with open('style.css') as f:
-        #     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
-
-        st.markdown("""
-        <style>
-        .label-font {
-            font-size:20px; font:sans serif; font-weight:700; 
-        }
-        </style>
-        """, unsafe_allow_html=True)
-
-        st.markdown("""
-        <style>
-        .label-font2 {
-            font-size:16px; font:sans serif; font-weight:700;
-        }
-        </style>
-        """, unsafe_allow_html=True)
+        for line in open('style.css', encoding='utf-8'):
+            st.markdown(f'<style>{line}</style>', unsafe_allow_html=True)
 
         # 个人基础信息
         with st.container():
             st.markdown('<p class="label-font">个人基础信息</p>', unsafe_allow_html=True)
             c1, ce, c2, ce, c3, ce, c4 = st.columns([1, 0.07, 1, 0.07, 2.5, 0.07, 3])
-            name = c1.text_input('姓名')
-            if len(name) > 12:
-                st.error('超过输入字符上限')
+            name = c1.text_input('姓名', max_chars=12)
             sex = c2.selectbox('性别', ('男', '女', '其他'))
-            phone = c3.text_input('联系方式')
-            if len(phone) > 11:
-                st.error('联系方式输入错误')
-            id = c4.text_input('身份证号码', on_change=None)
-            if len(id) not in [0, 18]:
-                st.error('身份证号输入错误')
+            phone = c3.text_input('联系方式', max_chars=11)
+            id = c4.text_input('身份证号码', max_chars=18)
         st.markdown('')
 
         # 症状体征
@@ -67,7 +45,9 @@ class datainputApp(HydraHeadApp):
 
             option1 = []
             st.markdown('<p class="label-font">症状体征</p>', unsafe_allow_html=True)
+
             options = st.multiselect('您是否患有以下症状（可多选）', ('腰痛', '神经根性疼痛', '下肢麻木无力', '⼤⼩便功能障碍', '其他：'))
+            st.write()
             if options:
                 with st.expander('详细信息', expanded=True):
                     if '其他：' in options:
@@ -310,7 +290,7 @@ class datainputApp(HydraHeadApp):
             df = df.where(df.notnull(), '')
             df.index = df.index + 1
 
-            if len(df) > 0:
+            if len(df)>0:
                 selected = interactive_table(df)
                 c1, ce, c2, ce = st.columns([1, 0.07, 1, 10])
                 delete = c1.button('删除所选信息', key='pmh_delete')
