@@ -24,6 +24,28 @@ class datainputApp(HydraHeadApp):
             )
             return selection
 
+        deta = Deta(st.secrets["deta_key"])
+        db_info = deta.Base("person_info")
+        details_info = deta.Base("details_info")
+
+        @st.cache(allow_output_mutation=True)
+        def get_data_sym():
+            return []
+
+        @st.cache(allow_output_mutation=True)
+        def get_data_ph():
+            return []
+
+        @st.cache(allow_output_mutation=True)
+        def get_data_image():
+            return []
+
+        @st.cache(allow_output_mutation=True)
+        def get_data_pmh():
+            return []
+
+
+
         # 个人基础信息
         with st.container():
             st.markdown('<p class="label-font">个人基础信息</p>', unsafe_allow_html=True)
@@ -32,14 +54,25 @@ class datainputApp(HydraHeadApp):
             sex = c2.selectbox('性别', ('男', '女', '其他'))
             phone = c3.text_input('联系方式', max_chars=11)
             id = c4.text_input('身份证号码', max_chars=18)
+            search = c1.button('搜索')
+            if search:
+                info = pd.DataFrame(db_info.fetch().items)
+                if id in info["身份证号"].tolist():
+                    st.info('存在患者信息,已经同步')
+                    details_df = pd.DataFrame(details_info.fetch().items)
+                    details_df = details_df[details_df["身份证号"] == id]
+                    for i in [['症状体征', get_data_sym()], ['体格检查', get_data_ph()], ['影像学检查', get_data_image()],
+                              ['既往病史', get_data_pmh()]]:
+                        i[1].clear()
+                        slide_df = details_df[details_df['数据类型'] == i[0]]
+                        slide_df.dropna(how='all', axis='columns')
+                        i[1].extend(slide_df.to_dict('records'))
+                else:
+                    st.info('不存在患者信息')
         st.markdown('')
 
         # 症状体征
         with st.container():
-            @st.cache(allow_output_mutation=True)
-            def get_data_sym():
-                return []
-
             option1 = []
             st.markdown('<p class="label-font">症状体征</p>', unsafe_allow_html=True)
             options = st.multiselect('您是否患有以下症状（可多选）', ('腰痛', '神经根性疼痛', '下肢麻木无力', '⼤⼩便功能障碍', '其他：'))
@@ -100,6 +133,7 @@ class datainputApp(HydraHeadApp):
                                      '录入时间': datetime.datetime.now().strftime("%Y-%m-%d-%H:%M")})
                             counter += 1
                         st.experimental_rerun()
+
             df = pd.DataFrame(get_data_sym(), columns=['症状', '程度', '类型', '持续时间（周）', '平均发作时长（小时）',
                                                        '发作频次（次/周）', '录入时间'])
             df.index = df.index + 1
@@ -123,10 +157,6 @@ class datainputApp(HydraHeadApp):
 
         # 体格检查
         with st.container():
-            @st.cache(allow_output_mutation=True)
-            def get_data_ph():
-                return []
-
             st.markdown('<p class="label-font">体格检查</p>', unsafe_allow_html=True)
             my_form = st.expander('增加体格检查结果')
             c1, ce, c2, ce, c3 = my_form.columns([1, 0.07, 1, 0.07, 1])
@@ -163,10 +193,6 @@ class datainputApp(HydraHeadApp):
 
         # 影像学检查
         with st.container():
-            @st.cache(allow_output_mutation=True)
-            def get_data_image():
-                return []
-
             st.markdown('<p class="label-font">影像学检查</p>', unsafe_allow_html=True)
             my_form = st.expander('增加影像学检查结果')
             c1, ce, c2, ce, c3, ce = my_form.columns([1, 0.07, 1, 0.07, 1, 0.07])
@@ -203,10 +229,6 @@ class datainputApp(HydraHeadApp):
 
         # 既往病史
         with st.container():
-            @st.cache(allow_output_mutation=True)
-            def get_data_pmh():
-                return []
-
             st.markdown('<p class="label-font">既往病史</p>', unsafe_allow_html=True)
             my_form = st.expander('增加既往症信息')
             c1, ce, c2, ce, c3 = my_form.columns([1, 0.07, 1, 0.07, 1])
@@ -326,31 +348,27 @@ class datainputApp(HydraHeadApp):
             if '' in [name, sex, phone]:
                 st.error('无法提交：基础信息不完整')
             else:
-                deta = Deta(st.secrets["deta_key"])
-                db_info = deta.Base("person_info")
-                info = pd.DataFrame(db_info.fetch().items)
-                db_details = deta.Base("details_info")
-                if id not in info["身份证号"].tolist():
-                    db_info.put({"姓名": name, '性别': sex, '电话': phone, "身份证号": id})
-                else:
-                    st.warning('已有患者信息')
-                for sym in get_data_sym():
-                    sym.update({"身份证号": id, '数据类型': '症状体征'})
-                    db_details.put(sym)
-                for img in get_data_image():
-                    img.update({"身份证号": id, '数据类型': '影像学检查'})
-                    db_details.put(img)
-                for pmh in get_data_pmh():
-                    pmh.update({"身份证号": id, '数据类型': '既往病史'})
-                    db_details.put(pmh)
-                for phy in get_data_ph():
-                    phy.update({"身份证号": id, '数据类型': '体格检查'})
-                    db_details.put(phy)
-
-            get_data_sym().clear()
-            get_data_image().clear()
-            get_data_pmh().clear()
-            get_data_ph().clear()
-            st.experimental_rerun()
-            st.success('提交成功')
-
+                with st.spinner("上传中"):
+                    info = pd.DataFrame(db_info.fetch().items)
+                    db_details = deta.Base("details_info")
+                    if id not in info["身份证号"].tolist():
+                        db_info.put({"姓名": name, '性别': sex, '电话': phone, "身份证号": id})
+                    for sym in get_data_sym():
+                        sym.update({"身份证号": id, '数据类型': '症状体征'})
+                        db_details.put(sym)
+                    for img in get_data_image():
+                        img.update({"身份证号": id, '数据类型': '影像学检查'})
+                        db_details.put(img)
+                    for pmh in get_data_pmh():
+                        pmh.update({"身份证号": id, '数据类型': '既往病史'})
+                        db_details.put(pmh)
+                    for phy in get_data_ph():
+                        phy.update({"身份证号": id, '数据类型': '体格检查'})
+                        db_details.put(phy)
+                        get_data_sym().clear()
+                        get_data_image().clear()
+                        get_data_pmh().clear()
+                        get_data_ph().clear()
+                        st.success('上传成功')
+                    else:
+                        st.warning('已有患者信息')
