@@ -330,30 +330,22 @@ class datainputApp(HydraHeadApp):
                 db_info = deta.Base("person_info")
                 info = pd.DataFrame(db_info.fetch().items)
                 db_details = deta.Base("details_info")
-                if id in info["身份证号"].tolist():
+                if id not in info["身份证号"].tolist():
+                    db_info.put({"姓名": name, '性别': sex, '电话': phone, "身份证号": id})
+                else:
                     st.warning('已有患者信息')
-                db_info.put({"姓名": name, '性别': sex, '电话': phone, "身份证号": id})
-                details_df = []
                 for sym in get_data_sym():
                     sym.update({"身份证号": id, '数据类型': '症状体征'})
-                    details_df.append(sym)
-                    # db_details.put(sym)
+                    db_details.put(sym)
                 for img in get_data_image():
                     img.update({"身份证号": id, '数据类型': '影像学检查'})
-                    # db_details.put(img)
-                    details_df.append(img)
+                    db_details.put(img)
                 for pmh in get_data_pmh():
                     pmh.update({"身份证号": id, '数据类型': '既往病史'})
-                    details_df.append(pmh)
-                    # db_details.put(pmh)
+                    db_details.put(pmh)
                 for phy in get_data_ph():
                     phy.update({"身份证号": id, '数据类型': '体格检查'})
-                    # db_details.put(phy)
-                    details_df.append(phy)
-            person_df = pd.DataFrame([{"姓名": name, '性别': sex, '电话': phone, "身份证号": id}])
-            person_df.to_csv('data/person_info.csv', encoding='utf-8_sig', index=False)
-            details_df = pd.DataFrame(details_df)
-            details_df.to_csv('data/details_info.csv', encoding='utf-8_sig', index=False)
+                    db_details.put(phy)
 
             get_data_sym().clear()
             get_data_image().clear()
