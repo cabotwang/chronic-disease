@@ -42,10 +42,10 @@ class datasearchApp(HydraHeadApp):
             else:
                 select_df = person_df[person_df['姓名'] == person_name]
             try:
-                # print(select_df['身份证号'])
                 id = select_df['身份证号'].tolist()[0]
-                print(id)
                 details = db_details.get(id)
+                c1.write()
+
                 select_df = select_df.set_index('身份证号')
                 c2.subheader('患者信息')
                 c2.markdown('<p class="label-font">个人基础信息</p>', unsafe_allow_html=True)
@@ -88,5 +88,5 @@ class datasearchApp(HydraHeadApp):
                                                       '用法用量', '录入时间'])
 
             except IndexError:
-                st.error('未找到患者')
+                c2.error('未找到患者')
             print(datetime.datetime.now() - t1)
