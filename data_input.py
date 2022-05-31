@@ -2,12 +2,15 @@ import streamlit as st
 import pandas as pd
 from hydralit import HydraHeadApp
 from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode
+from hydralit_components import HyLoader, Loaders
 import datetime
 from deta import Deta
 
 
 class datainputApp(HydraHeadApp):
     def run(self):
+        global id
+
         def interactive_table(df: pd.DataFrame):
             builder = GridOptionsBuilder.from_dataframe(df, enableRowGroup=True, enableValue=True, enablePivot=True)
             builder.configure_selection("single")
@@ -44,8 +47,6 @@ class datainputApp(HydraHeadApp):
         def get_data_pmh():
             return []
 
-
-
         # 个人基础信息
         with st.container():
             st.markdown('<p class="label-font">个人基础信息</p>', unsafe_allow_html=True)
@@ -59,14 +60,12 @@ class datainputApp(HydraHeadApp):
                 info = pd.DataFrame(db_info.fetch().items)
                 if id in info["身份证号"].tolist():
                     st.info('存在患者信息,已经同步')
-                    details_df = pd.DataFrame(details_info.fetch().items)
-                    details_df = details_df[details_df["身份证号"] == id]
+                    details = details_info.get(id)
+
                     for i in [['症状体征', get_data_sym()], ['体格检查', get_data_ph()], ['影像学检查', get_data_image()],
                               ['既往病史', get_data_pmh()]]:
                         i[1].clear()
-                        slide_df = details_df[details_df['数据类型'] == i[0]]
-                        slide_df.dropna(how='all', axis='columns')
-                        i[1].extend(slide_df.to_dict('records'))
+                        i[1].extend(details[i[0]])
                 else:
                     st.info('不存在患者信息')
         st.markdown('')
@@ -349,26 +348,14 @@ class datainputApp(HydraHeadApp):
                 st.error('无法提交：基础信息不完整')
             else:
                 with st.spinner("上传中"):
-                    info = pd.DataFrame(db_info.fetch().items)
                     db_details = deta.Base("details_info")
-                    if id not in info["身份证号"].tolist():
-                        db_info.put({"姓名": name, '性别': sex, '电话': phone, "身份证号": id})
-                    for sym in get_data_sym():
-                        sym.update({"身份证号": id, '数据类型': '症状体征'})
-                        db_details.put(sym)
-                    for img in get_data_image():
-                        img.update({"身份证号": id, '数据类型': '影像学检查'})
-                        db_details.put(img)
-                    for pmh in get_data_pmh():
-                        pmh.update({"身份证号": id, '数据类型': '既往病史'})
-                        db_details.put(pmh)
-                    for phy in get_data_ph():
-                        phy.update({"身份证号": id, '数据类型': '体格检查'})
-                        db_details.put(phy)
-                        get_data_sym().clear()
-                        get_data_image().clear()
-                        get_data_pmh().clear()
-                        get_data_ph().clear()
-                        st.success('上传成功')
-                    else:
-                        st.warning('已有患者信息')
+                    db_info.put({"姓名": name, '性别': sex, '电话': phone, "身份证号": id, 'key': id,
+                                 '数据采集': datetime.datetime.now().strftime("%Y-%m-%d")})
+                    db_details.put({'key': id, '症状体征': get_data_sym(), '影像学检查': get_data_image(),
+                                    '既往病史': get_data_pmh(), '体格检查': get_data_ph()})
+
+                    get_data_sym().clear()
+                    get_data_image().clear()
+                    get_data_pmh().clear()
+                    get_data_ph().clear()
+                    st.success('上传成功')

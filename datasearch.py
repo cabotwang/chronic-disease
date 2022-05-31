@@ -4,6 +4,7 @@ from hydralit import HydraHeadApp
 from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode
 from deta import Deta
 import datetime
+import hydralit_components as hc
 
 
 class datasearchApp(HydraHeadApp):
@@ -35,42 +36,56 @@ class datasearchApp(HydraHeadApp):
             db_info = deta.Base("person_info")
             db_details = deta.Base("details_info")
             person_df = pd.DataFrame(db_info.fetch().items)
-            details_df = pd.DataFrame(db_details.fetch().items)
-            details_df = details_df.where(details_df.notnull(), '')
 
-            with c2:
-                if person_id != '':
-                    select_df = person_df[person_df['身份证号'] == person_id]
-                else:
-                    select_df = person_df[person_df['姓名'] == person_name]
-                    try:
-                        id = select_df['身份证号'].tolist()[0]
-                        select_df = select_df.set_index('身份证号')
-                        st.markdown('<p class="label-font">个人基础信息</p>', unsafe_allow_html=True)
-                        st.write('患者姓名：%s' % select_df.loc[id, '姓名'])
-                        st.write('患者姓别：%s' % select_df.loc[id, '性别'])
-                        st.write('联系方式：%s' % select_df.loc[id, '电话'])
-                        st.write('身份证：%s' % id)
-                        st.markdown('')
-                        details_df = details_df[details_df['身份证号'] == id]
+            if person_id != '':
+                select_df = person_df[person_df['身份证号'] == person_id]
+            else:
+                select_df = person_df[person_df['姓名'] == person_name]
+            try:
+                print(select_df['身份证号'])
+                id = select_df['身份证号'].tolist()[0]
+                details = db_details.get(id)
+                select_df = select_df.set_index('身份证号')
+                c2.subheader('患者信息')
+                c2.markdown('<p class="label-font">个人基础信息</p>', unsafe_allow_html=True)
+                c2.write('患者姓名：%s' % select_df.loc[id, '姓名'])
+                c2.write('患者姓别：%s' % select_df.loc[id, '性别'])
+                c2.write('联系方式：%s' % select_df.loc[id, '电话'])
+                c2.write('身份证：%s' % id)
+                c2.markdown('')
 
-                        def write_result(df: pd.DataFrame, name: str, cols: list):
-                            slice_df = df[df['数据类型'] == name]
-                            print(slice_df)
-                            if len(slice_df) == 0:
-                                return True
-                            else:
-                                slice_df = slice_df[cols]
-                                st.markdown('<p class="label-font">%s</p>' % name, unsafe_allow_html=True)
-                                show_table(slice_df)
-                                return True
+                c2.markdown('<p class="label-font">进度管理</p>', unsafe_allow_html=True)
+                cc = st.columns([1.07, 0.07, 0.75, 0.75, 0.75, 0.75,0.07])
+                theme_bad = {'bgcolor': '#f9f9f9', 'title_color': 'grey', 'content_color': 'grey',
+                              'icon_color': 'grey', 'icon': 'fa fa-times-circle'}
+                with cc[2]:
+                    hc.info_card(title='数据采集', content='最后日期：%s' % select_df.loc[id, '数据采集'], sentiment='good', bar_value=100)
+                with cc[3]:
+                    hc.info_card(title='诊疗意见', content='进行中', sentiment='neutral', bar_value=0)
+                with cc[4]:
+                    hc.info_card(title='实际诊疗信息', content='未进行', sentiment='bad', bar_value=0, theme_override=theme_bad)
+                with cc[5]:
+                    hc.info_card(title='随访教育', content='未进行', sentiment='bad', bar_value=0, theme_override=theme_bad)
 
-                        write_result(details_df, '症状体征', ['症状', '程度', '类型', '持续时间（周）', '平均发作时长（小时）', '发作频次（次/周）', '录入时间'])
-                        write_result(details_df, '体格检查', ['检查类型', '日期', '检查结果', '录入时间'])
-                        write_result(details_df, '影像学检查', ['检查类型', '日期', '检查结果', '录入时间'])
-                        write_result(details_df, '既往病史', ['既往诊断', '患病时长（年）', '治疗方式', '名称', '时间', '疗程', '效果', '医疗机构',
-                                                          '用法用量', '录入时间'])
+                ce, c1, ce, c2, ce = st.columns([0.07, 1, 0.07, 3, 0.07])
+                with c2:
+                    def write_result(df, name: str, cols: list):
+                        slice_df = pd.DataFrame(df, columns=cols)
+                        slice_df = slice_df.where(slice_df.notnull(),'')
+                        if len(slice_df) == 0:
+                            return True
+                        else:
+                            # slice_df = slice_df[cols]
+                            st.markdown('<p class="label-font">%s</p>' % name, unsafe_allow_html=True)
+                            show_table(slice_df)
+                            return True
 
-                    except IndexError:
-                        st.error('未找到患者')
-                print(datetime.datetime.now() - t1)
+                    write_result(details['症状体征'], '症状体征', ['症状', '程度', '类型', '持续时间（周）', '平均发作时长（小时）', '发作频次（次/周）', '录入时间'])
+                    write_result(details['体格检查'], '体格检查', ['检查类型', '日期', '检查结果', '录入时间'])
+                    write_result(details['影像学检查'], '影像学检查', ['检查类型', '日期', '检查结果', '录入时间'])
+                    write_result(details['既往病史'], '既往病史', ['既往诊断', '患病时长（年）', '治疗方式', '名称', '时间', '疗程', '效果', '医疗机构',
+                                                      '用法用量', '录入时间'])
+
+            except IndexError:
+                st.error('未找到患者')
+            print(datetime.datetime.now() - t1)
