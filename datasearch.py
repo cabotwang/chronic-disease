@@ -42,8 +42,9 @@ class datasearchApp(HydraHeadApp):
             else:
                 select_df = person_df[person_df['姓名'] == person_name]
             try:
-                print(select_df['身份证号'])
+                # print(select_df['身份证号'])
                 id = select_df['身份证号'].tolist()[0]
+                print(id)
                 details = db_details.get(id)
                 select_df = select_df.set_index('身份证号')
                 c2.subheader('患者信息')
@@ -51,7 +52,7 @@ class datasearchApp(HydraHeadApp):
                 c2.write('患者姓名：%s' % select_df.loc[id, '姓名'])
                 c2.write('患者姓别：%s' % select_df.loc[id, '性别'])
                 c2.write('联系方式：%s' % select_df.loc[id, '电话'])
-                c2.write('身份证：%s' % id)
+                c2.write('身份证号：%s' % id)
                 c2.markdown('')
 
                 c2.markdown('<p class="label-font">进度管理</p>', unsafe_allow_html=True)
@@ -71,7 +72,7 @@ class datasearchApp(HydraHeadApp):
                 with c2:
                     def write_result(df, name: str, cols: list):
                         slice_df = pd.DataFrame(df, columns=cols)
-                        slice_df = slice_df.where(slice_df.notnull(),'')
+                        slice_df = slice_df.where(slice_df.notnull(), '')
                         if len(slice_df) == 0:
                             return True
                         else:
