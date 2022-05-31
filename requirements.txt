@@ -6,3 +6,4 @@ streamlit==1.7.0
 streamlit-aggrid
 deta == 1.1.0
 hydralit == 1.0.12
+protobuf == 3.20.x
