@@ -56,17 +56,17 @@ class datasearchApp(HydraHeadApp):
                 c2.markdown('')
 
                 c2.markdown('<p class="label-font">进度管理</p>', unsafe_allow_html=True)
-                cc = st.columns([1.07, 0.07, 0.75, 0.75, 0.75, 0.75,0.07])
-                theme_bad = {'bgcolor': '#f9f9f9', 'title_color': 'grey', 'content_color': 'grey',
-                              'icon_color': 'grey', 'icon': 'fa fa-times-circle'}
-                with cc[2]:
-                    hc.info_card(title='数据采集', content='最后日期：%s' % select_df.loc[id, '数据采集'], sentiment='good', bar_value=100)
-                with cc[3]:
-                    hc.info_card(title='诊疗意见', content='进行中', sentiment='neutral', bar_value=0)
-                with cc[4]:
-                    hc.info_card(title='实际诊疗信息', content='未进行', sentiment='bad', bar_value=0, theme_override=theme_bad)
-                with cc[5]:
-                    hc.info_card(title='随访教育', content='未进行', sentiment='bad', bar_value=0, theme_override=theme_bad)
+                # cc = st.columns([1.07, 0.07, 0.75, 0.75, 0.75, 0.75,0.07])
+                # theme_bad = {'bgcolor': '#f9f9f9', 'title_color': 'grey', 'content_color': 'grey',
+                #               'icon_color': 'grey', 'icon': 'fa fa-times-circle'}
+                # with cc[2]:
+                #     hc.info_card(title='数据采集', content='最后日期：%s' % select_df.loc[id, '数据采集'], sentiment='good', bar_value=100)
+                # with cc[3]:
+                #     hc.info_card(title='诊疗意见', content='进行中', sentiment='neutral', bar_value=0)
+                # with cc[4]:
+                #     hc.info_card(title='实际诊疗信息', content='未进行', sentiment='bad', bar_value=0, theme_override=theme_bad)
+                # with cc[5]:
+                #     hc.info_card(title='随访教育', content='未进行', sentiment='bad', bar_value=0, theme_override=theme_bad)
 
                 ce, c1, ce, c2, ce = st.columns([0.07, 1, 0.07, 3, 0.07])
                 with c2:
