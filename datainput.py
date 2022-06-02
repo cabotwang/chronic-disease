@@ -50,12 +50,14 @@ class datainputApp(HydraHeadApp):
         # 个人基础信息
         with st.container():
             st.markdown('<p class="label-font">个人基础信息</p>', unsafe_allow_html=True)
-            c1, ce, c2, ce, c3, ce, c4 = st.columns([1, 0.07, 1, 0.07, 2.5, 0.07, 3])
+            c1, ce, c2, ce, c3, ce, c4 = st.columns([1, 0.07, 1, 0.07, 1.5, 0.07, 2])
             name = c1.text_input('姓名', max_chars=12)
             sex = c2.selectbox('性别', ('男', '女', '其他'))
             phone = c3.text_input('联系方式', max_chars=11)
             id = c4.text_input('身份证号码', max_chars=18)
-            search = c1.button('搜索')
+            ideal_area = c1.selectbox('倾向治疗区域', ('无倾向', '本市', '外市'), key='ideal_area')
+            ideal_therapy = c2.selectbox('倾向治疗方式', ('无倾向', '保守', '微创手术', '开放手术'), key='ideal_therapy')
+            search = c1.button('搜索', help='根据身份证号进行搜索')
             if search:
                 info = pd.DataFrame(db_info.fetch().items)
                 if id in info["身份证号"].tolist():
@@ -247,8 +249,12 @@ class datainputApp(HydraHeadApp):
                 drug_use = c2.text_input('用法用量', key='drug_use', help='需填写剂量、单位、应用频次、给药途径，如：600 mg，三次每日，口服')
                 drug_start = c3.date_input('开始时间', datetime.date(2022, 5, 26), key='durg_time')
                 drug_dur = c1.text_input('疗程', key='drug_dur')
-                drug_other = c2.text_input('药物效果', key='drug_effect')
-                drug_hospital = c3.text_input('就诊医疗机构', key='drug_hospital')
+                drug_effect = c2.selectbox('药物效果', ('症状缓解', '症状稍缓解', '症状未缓解', '其他'), key='drug_effect')
+                if drug_effect == '其他':
+                    drug_effect = c3.text_input('请说明', key='drug_effect_other')
+                    drug_hospital = c1.text_input('就诊医疗机构', key='drug_hospital')
+                else:
+                    drug_hospital = c3.text_input('就诊医疗机构', key='drug_hospital')
 
             if '保守-理疗' in tm:
                 my_form.markdown('<p class="label-font2">保守-理疗</p>', unsafe_allow_html=True)
@@ -258,14 +264,22 @@ class datainputApp(HydraHeadApp):
                 if therapy_name != '其他':
                     therapy_time = c2.date_input('治疗时间', datetime.date(2022, 5, 26), key='therapy_time')
                     therapy_dur = c3.text_input('疗程', key='therapy_dur')
-                    therapy_effect = c1.text_input('理疗效果', key='therapy_effect')
-                    therapy_hospital = c2.text_input('就诊医疗机构', key='therapy_hospital')
+                    therapy_effect = c1.selectbox('理疗效果', ('症状缓解', '症状稍缓解', '症状未缓解', '其他'), key='therapy_effect')
+                    if therapy_effect == '其他':
+                        therapy_effect = c2.text_input('请说明', key='therapy_effect_other')
+                        therapy_hospital = c3.text_input('就诊医疗机构', key='therapy_hospital')
+                    else:
+                        therapy_hospital = c2.text_input('就诊医疗机构', key='therapy_hospital')
                 else:
                     therapy_name = c2.text_input('请具体说明', key='spe_surgery_effect')
                     therapy_time = c3.date_input('治疗时间', datetime.date(2022, 5, 26), key='therapy_time')
                     therapy_dur = c1.text_input('疗程', key='therapy_dur')
-                    therapy_effect = c2.text_input('理疗效果', key='therapy_effect')
-                    therapy_hospital = c3.text_input('就诊医疗机构', key='therapy_hospital')
+                    therapy_effect = c2.selectbox('理疗效果', ('症状缓解', '症状稍缓解', '症状未缓解', '其他'), key='therapy_effect')
+                    if therapy_effect == '其他':
+                        therapy_effect = c3.text_input('请说明', key='therapy_effect_other')
+                        therapy_hospital = c1.text_input('就诊医疗机构', key='therapy_hospital')
+                    else:
+                        therapy_hospital = c3.text_input('就诊医疗机构', key='therapy_hospital')
 
             if '⼿术-开放' in tm:
                 my_form.markdown('<p class="label-font2">⼿术-开放</p>', unsafe_allow_html=True)
@@ -273,13 +287,21 @@ class datainputApp(HydraHeadApp):
                 surgery_name = c1.selectbox('术式', ('腰椎融合术', '腰椎人工椎间盘置换术', '其他'), key='surgery_name')
                 if surgery_name != '其他':
                     surgery_time = c2.date_input('手术时间', datetime.date(2022, 5, 26), key='surgery_time')
-                    surgery_effect = c3.text_input('手术效果', key='surgery_effect')
-                    surgery_hospital = c1.text_input('就诊医疗机构', key='surgery_hospital')
+                    surgery_effect = c3.selectbox('手术效果', ('症状缓解', '症状稍缓解', '症状未缓解', '其他'), key='surgery_effect')
+                    if surgery_effect == '其他':
+                        surgery_effect = c1.text_input('请说明', key='surgery_effect_other')
+                        surgery_hospital = c2.text_input('就诊医疗机构', key='surgery_hospital')
+                    else:
+                        surgery_hospital = c1.text_input('就诊医疗机构', key='surgery_hospital')
                 else:
                     surgery_name = c2.text_input('请具体说明', key='spe_surgery_effect')
                     surgery_time = c3.date_input('手术时间', datetime.date(2022, 5, 26), key='surgery_time')
-                    surgery_effect = c1.text_input('手术效果', key='surgery_effect')
-                    surgery_hospital = c2.text_input('就诊医疗机构', key='surgery_hospital')
+                    surgery_effect = c1.selectbox('手术效果', ('症状缓解', '症状稍缓解', '症状未缓解', '其他'), key='surgery_effect')
+                    if surgery_effect == '其他':
+                        surgery_effect = c2.text_input('请说明', key='surgery_effect_other')
+                        surgery_hospital = c3.text_input('就诊医疗机构', key='surgery_hospital')
+                    else:
+                        surgery_hospital = c2.text_input('就诊医疗机构', key='surgery_hospital')
 
             if '⼿术-微创' in tm:
                 my_form.markdown('<p class="label-font2">⼿术-微创</p>', unsafe_allow_html=True)
@@ -290,13 +312,23 @@ class datainputApp(HydraHeadApp):
                                                  key='microsurgery_name')
                 if microsurgery_name != '其他':
                     microsurgery_time = c2.date_input('手术时间', datetime.date(2022, 5, 26), key='microsurgery_time')
-                    microsurgery_effect = c3.text_input('手术效果', key='microsurgery_effect')
-                    microsurgery_hospital = c1.text_input('就诊医疗机构', key='microsurgery_hospital')
+                    microsurgery_effect = c3.selectbox('手术效果', ('症状缓解', '症状稍缓解', '症状未缓解', '其他'),
+                                                       key='microsurgery_effect')
+                    if microsurgery_effect == '其他':
+                        microsurgery_effect = c1.text_input('请说明', key='microsurgery_effect_other')
+                        microsurgery_hospital = c2.text_input('就诊医疗机构', key='microsurgery_hospital')
+                    else:
+                        microsurgery_hospital = c1.text_input('就诊医疗机构', key='microsurgery_hospital')
                 else:
                     microsurgery_name = c2.text_input('请具体说明', key='spe_surgery_effect')
                     microsurgery_time = c3.date_input('手术时间', datetime.date(2022, 5, 26), key='microsurgery_time')
-                    microsurgery_effect = c1.text_input('手术效果', key='microsurgery_effect')
-                    microsurgery_hospital = c2.text_input('就诊医疗机构', key='microsurgery_hospital')
+                    microsurgery_effect = c1.selectbox('手术效果', ('症状缓解', '症状稍缓解', '症状未缓解', '其他'),
+                                                       key='microsurgery_effect')
+                    if microsurgery_effect == '其他':
+                        microsurgery_effect = c2.text_input('请说明', key='microsurgery_effect_other')
+                        microsurgery_hospital = c3.text_input('就诊医疗机构', key='microsurgery_hospital')
+                    else:
+                        microsurgery_hospital = c2.text_input('就诊医疗机构', key='microsurgery_hospital')
 
             submit_image = my_form.button('增加', key='phm')
             if submit_image:
@@ -304,7 +336,7 @@ class datainputApp(HydraHeadApp):
                     if i == '保守-药物':
                         get_data_pmh().append({'既往诊断': dn, '患病时长（年）': dn_time, '治疗方式': i, '名称': drug_name,
                                                '用法用量': drug_use, '时间': drug_start.strftime('%Y-%m-%d'), '疗程': drug_dur,
-                                               '效果': drug_other, '医疗机构': drug_hospital,
+                                               '效果': drug_effect, '医疗机构': drug_hospital,
                                                '录入时间': datetime.datetime.now().strftime("%Y-%m-%d-%H:%M")})
                     if i == '保守-理疗':
                         get_data_pmh().append({'既往诊断': dn, '患病时长（年）': dn_time, '治疗方式': i, '名称': therapy_name,
@@ -349,11 +381,11 @@ class datainputApp(HydraHeadApp):
             else:
                 with st.spinner("上传中"):
                     db_details = deta.Base("details_info")
-                    db_info.put({"姓名": name, '性别': sex, '电话': phone, "身份证号": id, 'key': id,
-                                 '数据采集': datetime.datetime.now().strftime("%Y-%m-%d")})
+                    db_info.update({"姓名": name, '性别': sex, '电话': phone, "身份证号": id, '倾向治疗区域': ideal_area,
+                                    '倾向治疗方式': ideal_therapy,
+                                    '数据采集': datetime.datetime.now().strftime("%Y-%m-%d")}, id)
                     db_details.put({'key': id, '症状体征': get_data_sym(), '影像学检查': get_data_image(),
                                     '既往病史': get_data_pmh(), '体格检查': get_data_ph()})
-
                     get_data_sym().clear()
                     get_data_image().clear()
                     get_data_pmh().clear()
