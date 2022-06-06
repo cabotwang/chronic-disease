@@ -21,22 +21,6 @@ class medhisApp(HydraHeadApp):
             info = pd.DataFrame(db_info.fetch().items)
             return info
 
-        def interactive_table(df: pd.DataFrame):
-            builder = GridOptionsBuilder.from_dataframe(df, enableRowGroup=True, enableValue=True, enablePivot=True)
-            builder.configure_selection("single")
-            selection = AgGrid(
-                df,
-                enable_enterprise_modules=True,
-                gridOptions=builder.build(),
-                fit_columns_on_grid_load=True,
-                enablePivot=True,
-                height=200,
-                theme='light',
-                update_mode=GridUpdateMode.MODEL_CHANGED,
-                allow_unsafe_jscode=True,
-            )
-            return selection
-
         if "search_button_clicked" not in st.session_state:
             st.session_state.search_button_clicked = False
         if "add_info_button_clicked" not in st.session_state:
@@ -70,6 +54,9 @@ class medhisApp(HydraHeadApp):
                 c2.write('身份证号：%s' % ID)
                 c2.write('最后随访时间：%s' % select_df.loc[ID, '随访时间'])
                 c2.markdown('')
+                med_info = deta.Base("medhis_info")
+                medhis = med_info.get(ID)
+                get_data_medhis().update(medhis['住院信息'])
 
                 with c2:
                     if '出院当日/后⼀日' in get_data_medhis().keys():
