@@ -1,6 +1,7 @@
 from hydralit import HydraHeadApp
 import streamlit as st
 import pandas as pd
+from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode
 from deta import Deta
 import datetime
 
@@ -12,7 +13,8 @@ class followupApp(HydraHeadApp):
         def get_data_followup():
             return []
 
-        ce, c1, ce, c2, ce, c3, ce = st.columns([0.07, 1, 0.07, 0.8, 0.07, 2, 0.07])
+
+        ce, c1, ce, c2, ce, c3, ce = st.columns([0.07, 0.8, 0.07, 0.8, 0.07, 2.4, 0.07])
         person_name = c1.text_input('按姓名搜索')
         person_id = c1.text_input('按身份证号搜索')
 
@@ -95,8 +97,8 @@ class followupApp(HydraHeadApp):
                                             get_data_followup().append({'问题': n[1], '答案': name[n[0]]})
                                     db_followup.put({'key': ID, '满意度问卷': get_data_followup(),
                                                      '数据采集时间': datetime.datetime.now().strftime("%Y-%m-%d")})
-                                st.session_state.questionare_button_clicked = False
                                 db_info.update({'随访教育': datetime.datetime.now().strftime("%Y-%m-%d")}, key=ID)
                                 st.success('满意度问卷已上传')
+                                st.session_state.questionare_button_clicked = False
             except IndexError:
                 c2.error('未找到患者')

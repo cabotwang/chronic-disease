@@ -26,7 +26,7 @@ class datasearchApp(HydraHeadApp):
             )
             return selection
 
-        ce, c1, ce, c2, ce = st.columns([0.07, 1, 0.07, 3, 0.07])
+        ce, c1, ce, c2, ce = st.columns([0.07, 0.8, 0.07, 3.2, 0.07])
         person_name = c1.text_input('按姓名搜索')
         person_id = c1.text_input('按身份证号搜索')
         search = c1.button('搜索')
@@ -57,7 +57,7 @@ class datasearchApp(HydraHeadApp):
                 c2.markdown('')
 
                 c2.markdown('<p class="label-font">进度管理</p>', unsafe_allow_html=True)
-                cc = st.columns([1.07, 0.07, 0.75, 0.75, 0.75, 0.75,0.07])
+                cc = st.columns([0.87, 0.07, 0.8, 0.8, 0.8, 0.8,0.07])
                 theme_bad = {'bgcolor': '#f9f9f9', 'title_color': 'grey', 'content_color': 'grey',
                               'icon_color': 'grey', 'icon': 'fa fa-times-circle'}
 
@@ -80,7 +80,7 @@ class datasearchApp(HydraHeadApp):
                 with cc[5]:
                     info_card('随访教育')
 
-                ce, c1, ce, c2, ce = st.columns([0.07, 1, 0.07, 3, 0.07])
+                ce, c1, ce, c2, ce = st.columns([0.07, 0.8, 0.07, 3.2, 0.07])
                 with c2.expander(label='院前信息采集'):
                     def write_result(df, name: str, cols: list):
                         slice_df = pd.DataFrame(df, columns=cols)
