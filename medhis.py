@@ -103,64 +103,78 @@ class medhisApp(HydraHeadApp):
 
                 if c2.button('新增住院信息', on_click=call_back_add_info) or st.session_state.add_info_button_clicked:
                     c3.markdown('<p class="label-font">住院信息</p>', unsafe_allow_html=True)
-                    his_type = c3.selectbox('时间结点', ('⼊院后手术前', '手术后出院前', '出院当日/后⼀日'), key='his_type')
+                    his_type = c3.selectbox('时间结点', ('入院后手术前', '手术后出院前', '出院当日/后⼀日'), key='his_type')
                     uploaded_discharge = None
                     uploaded_fee = None
-                    if his_type == '⼊院后手术前':
+                    if his_type == '入院后手术前':
                         activity_state = c3.selectbox('活动状态', ('自主活动', '活动受限', '被动活动：轴线翻⾝', '被动活动：下肢抬⾼'),
                                                       key='his_type')
                         inpatient_time = c3.date_input('入院时间', datetime.date(2022, 5, 26), key='inpatient_time')
+                        surgery_type = c3.selectbox('预计术式', ('腰椎融合术', '腰椎人工椎间盘置换术', '经皮椎间盘切吸术', '经皮椎间盘激光消融术',
+                                                             '经皮椎间盘臭氧消融术及射频消融髓核成形术',
+                                                             '经皮椎间盘等离子消融术', '经皮椎间盘胶原酶化学溶解术', '显微腰椎间盘切除术',
+                                                             '显微内窥镜腰椎间盘切除术', '经皮内镜腰椎间盘切除术', '椎间盘髓核摘除术', '其他'),
+                                                    key='surgery_type')
+                        if surgery_type == '其他':
+                            c3.text_input('请具体说明', key='surgery_type')
                         surgery_time = c3.date_input('预期手术时间', datetime.date(2022, 5, 26), key='surgery_time')
                     elif his_type == '手术后出院前':
                         activity_state = c3.selectbox('活动状态', ('自主活动', '活动受限', '被动活动：轴线翻⾝', '被动活动：下肢抬⾼'),
                                                       key='his_type')
+                        surgery_type = c3.selectbox('进行术式', ('腰椎融合术', '腰椎人工椎间盘置换术', '经皮椎间盘切吸术', '经皮椎间盘激光消融术',
+                                                             '经皮椎间盘臭氧消融术及射频消融髓核成形术',
+                                                             '经皮椎间盘等离子消融术', '经皮椎间盘胶原酶化学溶解术', '显微腰椎间盘切除术',
+                                                             '显微内窥镜腰椎间盘切除术', '经皮内镜腰椎间盘切除术', '椎间盘髓核摘除术', '其他'),
+                                                    key='surgery_type')
+                        if surgery_type == '其他':
+                            c3.text_input('请具体说明', key='surgery_type')
                         surgery_time = c3.date_input('手术时间', datetime.date(2022, 5, 26), key='surgery_time')
                         discharge_time = c3.date_input('预计出院时间', datetime.date(2022, 5, 26), key='discharge_time')
-                        extention_reson = c3.selectbox('是否有以下症状', ('无以下症状', '发热', '血尿', '手术部位感染', '腰部疼痛无缓解或者加剧'))
+                        extention_reson = c3.selectbox('是否有以下特征', ('无以下症状', '发热', '血尿', '头痛,恶心,呕吐', '年龄65岁以上', '腰部疼痛无缓解或者加剧'))
                     else:
                         activity_state = c3.selectbox('活动状态', ('自主活动', '活动受限', '被动活动：轴线翻⾝', '被动活动：下肢抬⾼'),
                                                       key='his_type')
-                        physical = c3.selectbox('理疗需求', ('不需要', '运动疗法', '康复训练', '牵引治疗'),
-                                                key='physical')
+                        physical = c3.multiselect('理疗需求', ('不需要', '运动疗法', '康复训练', '牵引治疗'),
+                                                  key='physical')
                         discharge_time = c3.date_input('出院时间', datetime.date(2022, 5, 26), key='discharge_time')
                         uploaded_discharge = c3.file_uploader("请上传出院小结", accept_multiple_files=True)
                         uploaded_fee = c3.file_uploader("请上传发票扫描件", accept_multiple_files=True)
 
                     if c3.button('增加'):
-                        if uploaded_discharge:
-                            for i in uploaded_discharge:
-                                with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-                                    fp = Path(tmp_file.name)
-                                    fp.write_bytes(i.getvalue())
-                                photos = deta.Drive(f'{ID}_discharge'.format(ID=person_id))
-                                photos.put(i.name, path=fp)
-                        else:
-                            c3.error('请上传出院小结')
-                            st.stop()
-                        if uploaded_fee:
-                            for i in uploaded_fee:
-                                with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-                                    fp = Path(tmp_file.name)
-                                    fp.write_bytes(i.getvalue())
-                                photos = deta.Drive(f'{ID}_fee'.format(ID=person_id))
-                                photos.put(i.name, path=fp)
-                        else:
-                            c3.error('请上传费用清单')
-                            st.stop()
-                        if his_type == '⼊院后手术前':
-                            get_data_medhis().update({his_type: {'活动状态': activity_state,
+                        if his_type == '入院后手术前':
+                            get_data_medhis().update({his_type: {'活动状态': activity_state, '预计手术类型': surgery_type,
                                                                  '入院时间': inpatient_time.strftime("%Y-%m-%d"),
                                                                  '预期手术时间': surgery_time.strftime("%Y-%m-%d")}})
                         elif his_type == '手术后出院前':
-                            get_data_medhis().update({his_type: {'活动状态': activity_state,
+                            get_data_medhis().update({his_type: {'活动状态': activity_state, '手术类型': surgery_type,
                                                                  '手术时间': surgery_time.strftime("%Y-%m-%d"),
                                                                  '预期出院时间': discharge_time.strftime("%Y-%m-%d"),
                                                                  '可能延期原因': extention_reson}})
                         else:
-                            get_data_medhis().update({his_type: {'活动状态': activity_state, '预期理疗': physical,
-                                                      '出院时间': discharge_time.strftime("%Y-%m-%d")}})
+                            if uploaded_discharge:
+                                for i in uploaded_discharge:
+                                    with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+                                        fp = Path(tmp_file.name)
+                                        fp.write_bytes(i.getvalue())
+                                    photos = deta.Drive(f'{ID}_discharge'.format(ID=person_id))
+                                    photos.put(i.name, path=fp)
+                            else:
+                                c3.error('请上传出院小结')
+                                st.stop()
+                            if uploaded_fee:
+                                for i in uploaded_fee:
+                                    with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+                                        fp = Path(tmp_file.name)
+                                        fp.write_bytes(i.getvalue())
+                                    photos = deta.Drive(f'{ID}_fee'.format(ID=person_id))
+                                    photos.put(i.name, path=fp)
+                            else:
+                                c3.error('请上传费用清单')
+                                st.stop()
+                            get_data_medhis().update({his_type: {'活动状态': activity_state, '预期理疗': ','.join(physical),
+                                                                 '出院时间': discharge_time.strftime("%Y-%m-%d")}})
                         db_medhis = deta.Base("medhis_info")
-                        db_info.update({'住院记录': datetime.datetime.now().strftime("%Y-%m-%d")}, key=ID)
+                        db_info.update({'住院记录': datetime.datetime.now().strftime("%Y-%m-%d"), '住院状态': his_type}, key=ID)
                         db_medhis.put({'key': ID, '住院信息': get_data_medhis(),
                                        '数据采集时间': datetime.datetime.now().strftime("%Y-%m-%d")})
                         st.session_state.add_info_button_clicked = False
