@@ -5,6 +5,7 @@ from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode
 from deta import Deta
 import datetime
 import hydralit_components as hc
+from recommend import phy_recommend
 
 
 class datasearchApp(HydraHeadApp):
@@ -26,7 +27,7 @@ class datasearchApp(HydraHeadApp):
             )
             return selection
 
-        ce, c1, ce, c2, ce = st.columns([0.07, 0.8, 0.07, 3.2, 0.07])
+        ce, c1, ce, c2, c3, ce = st.columns([0.07, 0.8, 0.07, 1.6, 1.6, 0.07])
         person_name = c1.text_input('按姓名搜索')
         person_id = c1.text_input('按身份证号搜索')
         search = c1.button('搜索')
@@ -54,8 +55,15 @@ class datasearchApp(HydraHeadApp):
                 c2.write('身份证号：%s' % id)
                 c2.write('倾向治疗区域：%s' % select_df.loc[id, '倾向治疗区域'])
                 c2.write('倾向治疗方式：%s' % select_df.loc[id, '倾向治疗方式'])
-                c2.write('倾向治疗方式：%s' % select_df.loc[id, '倾向治疗方式'])
                 c2.markdown('')
+
+                rec_df, med_type = phy_recommend(select_df.loc[id, '倾向治疗区域'], select_df.loc[id, '倾向治疗方式'])
+                c3.markdown('<p class="label-font">诊疗推荐</p>', unsafe_allow_html=True)
+                c3.write('推荐治疗方式：%s' % med_type)
+                c3.markdown('<p class="label-font">推荐医疗机构/医生清单</p>', unsafe_allow_html=True)
+                # style = rec_df.style.hide_index()
+                # c3.write(style.to_html(), unsafe_allow_html=True)
+                c3.table(rec_df)
 
                 c2.markdown('<p class="label-font">进度管理</p>', unsafe_allow_html=True)
                 cc = st.columns([0.87, 0.07, 0.8, 0.8, 0.8, 0.8, 0.07])

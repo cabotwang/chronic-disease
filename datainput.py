@@ -56,6 +56,8 @@ class datainputApp(HydraHeadApp):
             id = c4.text_input('身份证号码', max_chars=18)
             ideal_area = c1.selectbox('倾向治疗区域', ('无倾向', '本市', '外市'), key='ideal_area')
             ideal_therapy = c2.selectbox('倾向治疗方式', ('无倾向', '保守', '微创手术', '开放手术'), key='ideal_therapy')
+            trauma = c3.selectbox('是否为创伤', ('否', '是'), key='trauma')
+            second_opinion = c4.selectbox('是否需要第二诊疗意见', ('是', '否'), key='second_opinion')
             search = c1.button('搜索', help='根据身份证号进行搜索')
             if search:
                 info = pd.DataFrame(db_info.fetch().items)
@@ -196,7 +198,7 @@ class datainputApp(HydraHeadApp):
             st.markdown('<p class="label-font">影像学检查</p>', unsafe_allow_html=True)
             my_form = st.expander('增加影像学检查结果')
             c1, ce, c2, ce, c3, ce = my_form.columns([1, 0.07, 1, 0.07, 1, 0.07])
-            image = c1.selectbox('影像学检查类型', ('X光', 'CT', 'MRI', '其他'), key='image_name')
+            image = c1.selectbox('影像学检查类型', ('X光', 'CT', 'MRI', '肌电图', '其他'), key='image_name')
             if image != '其他':
                 image_time = c2.date_input('最近一次检查时间', datetime.date(2022, 5, 26), key='time')
                 result = c3.multiselect('检查结果', ('腰椎间盘退变,损伤', '椎间盘局限性突出', '压迫神经根,⻢尾'), key='result')
@@ -381,7 +383,7 @@ class datainputApp(HydraHeadApp):
                 with st.spinner("上传中"):
                     db_details = deta.Base("details_info")
                     db_info.update({"姓名": name, '性别': sex, '电话': phone, "身份证号": id, '倾向治疗区域': ideal_area,
-                                    '倾向治疗方式': ideal_therapy,
+                                    '倾向治疗方式': ideal_therapy, '创伤判定': trauma,
                                     '数据采集': datetime.datetime.now().strftime("%Y-%m-%d")}, id)
                     db_details.put({'key': id, '症状体征': get_data_sym(), '影像学检查': get_data_image(),
                                     '既往病史': get_data_pmh(), '体格检查': get_data_ph()})

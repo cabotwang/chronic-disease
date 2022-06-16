@@ -13,7 +13,7 @@ if __name__ == '__main__':
     st.title('来宾个案管理平台')
     app = HydraApp(title='慢病管理平台', favicon="🏠", navbar_theme={'menu_background':'royalblue'})
     app.add_app("院前信息采集", icon="⌨", app=datainputApp())
-    app.add_app("院中信息记录", icon="🛏️", app=medhisApp())
+    app.add_app("住院信息记录", icon="🛏️", app=medhisApp())
     app.add_app("院后信息随访", icon="📅", app=followupApp())
     app.add_app("信息查询", icon="📚", app=datasearchApp())
 
