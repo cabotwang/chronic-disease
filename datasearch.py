@@ -7,7 +7,6 @@ import datetime
 import hydralit_components as hc
 from recommend import phy_recommend
 
-
 class datasearchApp(HydraHeadApp):
     def run(self):
 
@@ -27,7 +26,7 @@ class datasearchApp(HydraHeadApp):
             )
             return selection
 
-        ce, c1, ce, c2, c3, ce = st.columns([0.07, 0.8, 0.07, 1.6, 1.6, 0.07])
+        ce, c1, ce, c2, c3, ce = st.columns([0.07, 0.8, 0.07, 1, 1.6, 0.07])
         person_name = c1.text_input('按姓名搜索')
         person_id = c1.text_input('按身份证号搜索')
         search = c1.button('搜索')
@@ -47,6 +46,7 @@ class datasearchApp(HydraHeadApp):
                 id = select_df['身份证号'].tolist()[0]
                 details = db_details.get(id)
                 select_df = select_df.set_index('身份证号')
+                print(select_df)
                 c2.subheader('患者信息')
                 c2.markdown('<p class="label-font">个人基础信息</p>', unsafe_allow_html=True)
                 c2.write('患者姓名：%s' % select_df.loc[id, '姓名'])
@@ -61,8 +61,6 @@ class datasearchApp(HydraHeadApp):
                 c3.markdown('<p class="label-font">诊疗推荐</p>', unsafe_allow_html=True)
                 c3.write('推荐治疗方式：%s' % med_type)
                 c3.markdown('<p class="label-font">推荐医疗机构/医生清单</p>', unsafe_allow_html=True)
-                # style = rec_df.style.hide_index()
-                # c3.write(style.to_html(), unsafe_allow_html=True)
                 c3.table(rec_df)
 
                 c2.markdown('<p class="label-font">进度管理</p>', unsafe_allow_html=True)
