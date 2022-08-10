@@ -8,3 +8,4 @@ streamlit-aggrid
 deta == 1.1.0
 protobuf == 3.20.1
 bokeh == 2.4.3
+compress_pickle == 2.1.0
