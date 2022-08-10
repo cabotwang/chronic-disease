@@ -89,10 +89,9 @@ class datasearchApp(HydraHeadApp):
                     st.session_state.episode_button_clicked = True
                     st.experimental_rerun()
         else:
-            c1, ce = st.columns([0.8, 3])
-            c1.markdown('<p class="label-font2">患者查询 > 病情信息</p>', unsafe_allow_html=True)
-            st.markdown('<p class="label-font">个人基础信息</p>', unsafe_allow_html=True)
+            st.markdown('<p class="label-font2">患者查询 > 病情信息</p>', unsafe_allow_html=True)
             c1, c2 = st.columns([1, 2])
+            c1.markdown('<p class="label-font">个人基础信息</p>', unsafe_allow_html=True)
             c1.markdown('<p class="label-font2">患者姓名：%s </p>' % get_data()['姓名'], unsafe_allow_html=True)
             c1.markdown('<p class="label-font2">患者姓别：%s </p>' % get_data()['性别'], unsafe_allow_html=True)
             c1.markdown('<p class="label-font2">联系方式：%s </p>' % get_data()['电话'], unsafe_allow_html=True)
