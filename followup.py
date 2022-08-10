@@ -45,7 +45,7 @@ class followupApp(HydraHeadApp):
                 c2.write('患者姓别：%s' % select_df.loc[ID, '性别'])
                 c2.write('联系方式：%s' % select_df.loc[ID, '电话'])
                 c2.write('身份证号：%s' % ID)
-                c2.write('最后随访时间：%s' % select_df.loc[ID, '随访时间'])
+                c2.write('最后随访时间：%s' % select_df.loc[ID, '更新时间'])
                 c2.markdown('')
 
                 if c2.button('增加满意度问卷', on_click=call_back_questionare,

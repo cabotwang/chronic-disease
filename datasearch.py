@@ -7,6 +7,7 @@ import datetime
 import hydralit_components as hc
 from recommend import phy_recommend
 
+
 class datasearchApp(HydraHeadApp):
     def run(self):
 
@@ -50,7 +51,6 @@ class datasearchApp(HydraHeadApp):
             st.session_state.episode_button_clicked = False
         deta = Deta(st.secrets["deta_key"])
         info = get_info_data()
-        print(info)
         info_need = info[['姓名', '身份证号', '性别', '个案管理状态', '电话', '倾向治疗区域', '倾向治疗方式', '更新时间']]
 
         if not st.session_state.episode_button_clicked:
@@ -61,7 +61,7 @@ class datasearchApp(HydraHeadApp):
                 search = st.form_submit_button('搜索')
                 if search:
                     get_data().clear()
-                    info = info[['姓名', '身份证号', '性别', '个案管理状态', '电话', '倾向治疗区域', '倾向治疗方式', '更新时间']]
+                    # info = info[['姓名', '身份证号', '性别', '个案管理状态', '电话', '倾向治疗区域', '倾向治疗方式', '更新时间']]
                     if name_id.isdigit():
                         select_df = info[info['身份证号'].str.contains(name_id)]
                     else:
@@ -100,80 +100,94 @@ class datasearchApp(HydraHeadApp):
             c1.markdown('<p class="label-font2">更新时间：%s </p>' % get_data()['更新时间'], unsafe_allow_html=True)
 
             rec_df, med_type = phy_recommend(get_data()['倾向治疗区域'], get_data()['倾向治疗方式'])
-            c2.markdown('<p class="label-font">诊疗推荐</p>', unsafe_allow_html=True)
-            c2.write('推荐治疗方式：%s' % med_type)
-            c2.markdown('<p class="label-font">推荐医疗机构/医生清单</p>', unsafe_allow_html=True)
-            c2.table(rec_df)
+            with c2:
+                c2.markdown('<p class="label-font">诊疗推荐</p>', unsafe_allow_html=True)
+                c2.write('推荐治疗方式：%s' % med_type)
+                c2.markdown('<p class="label-font">推荐医疗机构/医生清单</p>', unsafe_allow_html=True)
+                show_table(rec_df)
 
-            # st.markdown('<p class="label-font">进度管理</p>', unsafe_allow_html=True)
-            # cc = st.columns([0.87, 0.07, 0.8, 0.8, 0.8, 0.8, 0.07])
-            # theme_bad = {'bgcolor': '#f9f9f9', 'title_color': 'grey', 'content_color': 'grey',
-            #              'icon_color': 'grey', 'icon': 'fa fa-times-circle'}
-            # theme_ongoing = {'bgcolor': '#fcf8e5', 'title_color': 'orange', 'content_color': 'orange',
-            #                  'icon_color': 'orange', 'progress_color': 'orange', 'icon': 'fa fa-play-circle'}
-            #
-            # def info_card(name):
-            #     try:
-            #         if info.loc[id, name] != '':
-            #             if name == '住院记录':
-            #                 state = select_df.loc[id, '住院状态']
-            #                 if state == '入院后手术前':
-            #                     hc.info_card(title=name, content='最后日期：%s; 目前状态：手术前' % select_df.loc[id, name],
-            #                                  sentiment='neutral',
-            #                                  bar_value=33, theme_override=theme_ongoing)
-            #                 elif state == '手术后出院前':
-            #                     hc.info_card(title=name, content='最后日期：%s; 目前状态：手术后出院前' % select_df.loc[id, name],
-            #                                  sentiment='neutral',
-            #                                  bar_value=66, theme_override=theme_ongoing)
-            #                 elif state == '出院当日/后⼀日':
-            #                     hc.info_card(title=name, content='最后日期：%s; 目前状态：出院后' % select_df.loc[id, name],
-            #                                  sentiment='good',
-            #                                  bar_value=100)
-            #             else:
-            #                 hc.info_card(title=name, content='最后日期：%s' % select_df.loc[id, name], sentiment='good',
-            #                              bar_value=100)
-            #         else:
-            #             hc.info_card(title=name, content='未进行', sentiment='bad', bar_value=0,
-            #                          theme_override=theme_bad)
-            #     except KeyError:
-            #         hc.info_card(title=name, content='未进行', sentiment='bad', bar_value=0, theme_override=theme_bad)
-            #
-            # with cc[2]:
-            #     info_card('数据采集')
-            # with cc[3]:
-            #     info_card('诊疗意见')
-            # with cc[4]:
-            #     info_card('住院记录')
-            # with cc[5]:
-            #     info_card('随访教育')
-            #
-            # ce, c1, ce, c2, ce = st.columns([0.07, 0.8, 0.07, 3.2, 0.07])
-            # with c2.expander(label='院前信息采集'):
-            #     def write_result(df, name: str, cols: list):
-            #         slice_df = pd.DataFrame(df, columns=cols)
-            #         slice_df = slice_df.where(slice_df.notnull(), '')
-            #         if len(slice_df) == 0:
-            #             return True
-            #         else:
-            #             # slice_df = slice_df[cols]
-            #             st.markdown('<p class="label-font">%s</p>' % name, unsafe_allow_html=True)
-            #             show_table(slice_df)
-            #             return True
-            #
-            #     write_result(details['症状体征'], '症状体征',
-            #                  ['症状', '程度', '类型', '持续时间（周）', '平均发作时长（小时）', '发作频次（次/周）', '录入时间'])
-            #     write_result(details['体格检查'], '体格检查', ['检查类型', '日期', '检查结果', '录入时间'])
-            #     write_result(details['影像学检查'], '影像学检查', ['检查类型', '日期', '检查结果', '录入时间'])
-            #     write_result(details['既往病史'], '既往病史', ['既往诊断', '患病时长（年）', '治疗方式', '名称', '时间', '疗程', '效果', '医疗机构',
-            #                                            '用法用量', '录入时间'])
+            st.markdown('<p class="label-font">进度管理</p>', unsafe_allow_html=True)
+            cc = st.columns([0.8, 0.8, 0.8, 0.8])
+            theme_bad = {'bgcolor': '#f9f9f9', 'title_color': 'grey', 'content_color': 'grey',
+                         'icon_color': 'grey', 'icon': 'fa fa-times-circle'}
+            theme_ongoing = {'bgcolor': '#fcf8e5', 'title_color': 'orange', 'content_color': 'orange',
+                             'icon_color': 'orange', 'progress_color': 'orange', 'icon': 'fa fa-play-circle'}
 
-                # with c2.expander(label='随访结果'):
+
+            def info_card(name):
+                select_df_card = info[info['身份证号'] == get_data()['身份证号']]
+                select_df_card.set_index('key', inplace=True)
+                try:
+                    if select_df_card.loc[get_data()['身份证号'], name] != '':
+                        if name == '住院记录':
+                            state = select_df_card.loc[get_data()['身份证号'], '住院状态']
+                            if state == '入院后手术前':
+                                hc.info_card(title=name,
+                                             content='最后日期：%s; 目前状态：手术前' % select_df_card.loc[get_data()['身份证号'], name],
+                                             sentiment='neutral',
+                                             bar_value=33, theme_override=theme_ongoing)
+                            elif state == '手术后出院前':
+                                hc.info_card(title=name, content='最后日期：%s; 目前状态：手术后出院前' % select_df_card.loc[
+                                    get_data()['身份证号'], name],
+                                             sentiment='neutral',
+                                             bar_value=66, theme_override=theme_ongoing)
+                            elif state == '出院当日/后⼀日':
+                                hc.info_card(title=name,
+                                             content='最后日期：%s; 目前状态：出院后' % select_df_card.loc[get_data()['身份证号'], name],
+                                             sentiment='good',
+                                             bar_value=100)
+                        else:
+                            hc.info_card(title=name, content='最后日期：%s' % select_df_card.loc[get_data()['身份证号'], name],
+                                         sentiment='good',
+                                         bar_value=100)
+                    else:
+                        hc.info_card(title=name, content='未进行', sentiment='bad', bar_value=0,
+                                     theme_override=theme_bad)
+                except KeyError:
+                    hc.info_card(title=name, content='未进行', sentiment='bad', bar_value=0, theme_override=theme_bad)
+
+            with cc[0]:
+                info_card('数据采集')
+            with cc[1]:
+                info_card('诊疗意见')
+            with cc[2]:
+                info_card('住院记录')
+            with cc[3]:
+                info_card('随访教育')
+
+
+            tab1, tab2, tab3 = st.tabs(['院前信息采集', '院中信息记录', '院后康复随访'])
+
+            def write_result(df, name: str, cols: list):
+                slice_df = pd.DataFrame(df, columns=cols)
+                slice_df = slice_df.where(slice_df.notnull(), '')
+                if len(slice_df) == 0:
+                    return True
+                else:
+                    # slice_df = slice_df[cols]
+                    st.markdown('<p class="label-font">%s</p>' % name, unsafe_allow_html=True)
+                    show_table(slice_df)
+                    return True
+            with tab1:
+                med_info = deta.Base("details_info")
+                details = med_info.get(get_data()['身份证号'])
+                write_result(details['症状体征'], '症状体征',
+                             ['症状', '程度', '类型', '持续时间（周）', '平均发作时长（小时）', '发作频次（次/周）', '录入时间'])
+                write_result(details['体格检查'], '体格检查', ['检查类型', '日期', '检查结果', '录入时间'])
+                write_result(details['影像学检查'], '影像学检查', ['检查类型', '日期', '检查结果', '录入时间'])
+                write_result(details['既往病史'], '既往病史', ['既往诊断', '患病时长（年）', '治疗方式', '名称', '时间', '疗程', '效果', '医疗机构',
+                                                       '用法用量', '录入时间'])
+            with tab2:
+                st.warning('暂无相关信息')
+
+            with tab3:
+                st.warning('暂无相关信息')
                 #     followup = db_followup.get(id)
                 #     slice_df = pd.DataFrame(followup['满意度问卷'], columns=['问题', '满意度', '答案'])
                 #     slice_df = slice_df.where(slice_df.notnull(), '')
                 #     show_table(slice_df)
 
-            back = c2.button('退出本次管理')
+            back = st.button('退出本次管理')
             if back:
                 st.session_state.episode_button_clicked = False
                 st.experimental_rerun()

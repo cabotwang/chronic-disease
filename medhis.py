@@ -38,7 +38,7 @@ class medhisApp(HydraHeadApp):
         def call_back_second_opinion():
             st.session_state.second_opinion_button_clicked = True
 
-        ce, c1, ce, c2, c3, ce, c4, ce = st.columns([0.07, 0.8, 0.07, 0.8, 0.8, 0.07, 1.6, 0.07])
+        c1, ce, c2, c3, ce, c4, ce = st.columns([0.8, 0.07, 0.8, 0.8, 0.07, 1.6, 0.07])
         person_name = c1.text_input('按姓名搜索')
         person_id = c1.text_input('按身份证号搜索')
 
@@ -58,11 +58,12 @@ class medhisApp(HydraHeadApp):
                 c2.write('患者姓别：%s' % select_df.loc[ID, '性别'])
                 c2.write('联系方式：%s' % select_df.loc[ID, '电话'])
                 c2.write('身份证号：%s' % ID)
-                c2.write('最后随访时间：%s' % select_df.loc[ID, '随访时间'])
+                c2.write('最后随访时间：%s' % select_df.loc[ID, '更新时间'])
                 c2.markdown('')
                 med_info = deta.Base("medhis_info")
                 medhis = med_info.get(ID)
-                get_data_medhis().update(medhis['住院信息'])
+                # get_data_medhis().update(medhis['住院信息'])
+                print(medhis)
 
                 if '出院当日/后⼀日' in get_data_medhis().keys():
                     c3.markdown('<p class="label-font">住院信息</p>', unsafe_allow_html=True)
