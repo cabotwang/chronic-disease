@@ -62,8 +62,8 @@ class medhisApp(HydraHeadApp):
                 c2.markdown('')
                 med_info = deta.Base("medhis_info")
                 medhis = med_info.get(ID)
-                # get_data_medhis().update(medhis['住院信息'])
-                print(medhis)
+                get_data_medhis().update(medhis['住院信息'])
+                print(get_data_medhis())
 
                 if '出院当日/后⼀日' in get_data_medhis().keys():
                     c3.markdown('<p class="label-font">住院信息</p>', unsafe_allow_html=True)
@@ -94,20 +94,20 @@ class medhisApp(HydraHeadApp):
                             image = Image.open(res)
                             c4.image(image)
                 elif '手术后出院前' in get_data_medhis().keys():
-                    st.markdown('<p class="label-font">住院信息</p>', unsafe_allow_html=True)
-                    st.write('目前状态：手术后出院前')
-                    st.write('活动状态：%s' % get_data_medhis()['手术后出院前']['活动状态'])
-                    st.write('入院时间：%s' % get_data_medhis()['⼊院后手术前']['入院时间'])
-                    st.write('手术时间：%s' % get_data_medhis()['手术后出院前']['手术时间'])
-                    st.write('预期出院时间：%s' % get_data_medhis()['手术后出院前']['预期出院时间'])
-                    st.write('可能延期原因：%s' % get_data_medhis()['手术后出院前']['可能延期原因'])
+                    c3.markdown('<p class="label-font">住院信息</p>', unsafe_allow_html=True)
+                    c3.write('目前状态：手术后出院前')
+                    c3.write('活动状态：%s' % get_data_medhis()['手术后出院前']['活动状态'])
+                    c3.write('入院时间：%s' % get_data_medhis()['⼊院后手术前']['入院时间'])
+                    c3.write('手术时间：%s' % get_data_medhis()['手术后出院前']['手术时间'])
+                    c3.write('预期出院时间：%s' % get_data_medhis()['手术后出院前']['预期出院时间'])
+                    c3.write('可能延期原因：%s' % get_data_medhis()['手术后出院前']['可能延期原因'])
 
-                elif '⼊院后手术前' in get_data_medhis().keys():
-                    st.markdown('<p class="label-font">住院信息</p>', unsafe_allow_html=True)
-                    st.write('目前状态：⼊院后手术前')
-                    st.write('活动状态：%s' % get_data_medhis()['⼊院后手术前']['活动状态'])
-                    st.write('入院时间：%s' % get_data_medhis()['⼊院后手术前']['入院时间'])
-                    st.write('预期手术时间：%s' % get_data_medhis()['⼊院后手术前']['预期手术时间'])
+                elif '入院后手术前' in get_data_medhis().keys():
+                    c3.markdown('<p class="label-font">住院信息</p>', unsafe_allow_html=True)
+                    c3.write('目前状态：⼊院后手术前')
+                    c3.write('活动状态：%s' % get_data_medhis()['入院后手术前']['活动状态'])
+                    c3.write('入院时间：%s' % get_data_medhis()['入院后手术前']['入院时间'])
+                    c3.write('预期手术时间：%s' % get_data_medhis()['入院后手术前']['预期手术时间'])
                 else:
                     pass
 
