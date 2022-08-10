@@ -1,4 +1,4 @@
-from hydralit.app_template import HydraHeadApp
+from Widget.Hydralit.app_template import HydraHeadApp
 
 
 class Templateapp(HydraHeadApp):

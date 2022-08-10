@@ -1,10 +1,10 @@
 from typing import Dict
 import streamlit as st
 from datetime import datetime, timedelta, timezone
-from hydralit.sessionstate import SessionState
-from hydralit.loading_app import LoadingApp
-import hydralit_components as hc
-from hydralit.wrapper_class import Templateapp
+from Widget.Hydralit.sessionstate import SessionState
+from Widget.Hydralit.loading_app import LoadingApp
+import Widget.hydralit_components as hc
+from Widget.Hydralit.wrapper_class import Templateapp
 
 class HydraApp(object):
     """

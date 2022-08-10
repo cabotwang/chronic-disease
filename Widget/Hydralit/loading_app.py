@@ -1,6 +1,6 @@
 import streamlit as st
-from hydralit_components import HyLoader, Loaders
-from hydralit.app_template import HydraHeadApp
+from Widget.hydralit_components import HyLoader, Loaders
+from Widget.Hydralit.app_template import HydraHeadApp
 
 
 class LoadingApp(HydraHeadApp):

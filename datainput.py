@@ -83,7 +83,6 @@ class datainputApp(HydraHeadApp):
         tab1, tab2, tab3, tab4 = st.tabs(['症状体征', '体格检查', '影像学检查', '既往病史'])
 
         # 症状体征
-        print('1')
         df_sym = pd.DataFrame(get_data_sym(), columns=['症状', '程度', '类型', '持续时间（周）', '平均发作时长（小时）',
                                                      '发作频次（次/周）', '录入时间'])
         if modal.is_open('sym_add_modal'):
@@ -152,7 +151,6 @@ class datainputApp(HydraHeadApp):
                         st.experimental_rerun()
 
         with tab1:
-            st.write(st.session_state)
             df_sym.index = df_sym.index + 1
             df_sym = df_sym.where(df_sym.notnull(), '')
             c0, c1, c2, ce = st.columns([0.3, 0.3, 0.6, 6])

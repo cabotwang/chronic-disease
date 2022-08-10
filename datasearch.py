@@ -4,7 +4,7 @@ from Widget.Hydralit import HydraHeadApp
 from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode
 from deta import Deta
 import datetime
-import hydralit_components as hc
+import Widget.hydralit_components as hc
 from recommend import phy_recommend
 
 class datasearchApp(HydraHeadApp):
