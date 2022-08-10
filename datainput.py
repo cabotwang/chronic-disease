@@ -176,22 +176,23 @@ class datainputApp(HydraHeadApp):
             phy_add = c0.button('增加', key='physics_add')
             phy_delete = c1.button('删除', key='physics_delete')
             phy_clear = c2.button('清除列表', key='physics_clear')
-            df = pd.DataFrame(get_data_ph(), columns=['检查类型', '日期', '检查结果', '录入时间'])
-            df = df.where(df.notnull(), '')
-            df.index = df.index + 1
-            selected = interactive_table(df, 'phy_df')
-
+            df_phy = pd.DataFrame(get_data_ph(), columns=['检查类型', '日期', '检查结果', '录入时间'])
+            df_phy = df_phy.where(df_phy.notnull(), '')
+            # df.index = df.index + 1
+            selected_phy = interactive_table(df_phy, 'df_phy')
+            print(selected_phy)
             if phy_add:
                 modal.open('phy_add_modal')
             if phy_delete:
-                get_data_ph().remove(selected["selected_rows"][0])
-                st.experimental_rerun()
+                for i in get_data_ph():
+                    if set(i.items()).issubset(selected_phy["selected_rows"][0].items()):
+                        get_data_ph().remove(i)
             if phy_clear:
                 get_data_ph().clear()
                 st.experimental_rerun()
 
         if modal.is_open('phy_add_modal'):
-            with modal.container('sym_add_modal'):
+            with modal.container('phy_add_modal'):
                 st.markdown('<p class="label-font">增加体格检查结果</p>', unsafe_allow_html=True)
                 c1, ce, c2, ce, c3 = st.columns([1, 0.07, 1, 0.07, 1])
                 physics = c1.selectbox('体格检查类型', ('直腿抬⾼试验', '直腿抬⾼加强试验', '健侧直腿抬⾼试验', '股神经牵拉试验', '腱反射较健侧减弱',
@@ -224,8 +225,9 @@ class datainputApp(HydraHeadApp):
             if img_add:
                 modal.open('image_add_modal')
             if img_delete:
-                get_data_image().remove(selected["selected_rows"][0])
-                st.experimental_rerun()
+                for i in get_data_image():
+                    if set(i.items()).issubset(selected["selected_rows"][0].items()):
+                        get_data_image().remove(i)
             if img_clear:
                 get_data_image().clear()
                 st.experimental_rerun()

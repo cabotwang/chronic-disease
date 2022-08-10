@@ -59,7 +59,7 @@ def container(key, title=None, padding=100):
             position: absolute;
         }
         div[data-modal-container='true'] > div > div:nth-child(2) > div {
-            margin-top: 150px;
+            margin-top: 250px;
             text-align: right;
         }
         div[data-modal-container='true'] > div > div:nth-child(2) > div > button {
