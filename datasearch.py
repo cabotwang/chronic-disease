@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from hydralit import HydraHeadApp
+from Widget.Hydralit import HydraHeadApp
 from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode
 from deta import Deta
 import datetime

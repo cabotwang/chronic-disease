@@ -1,4 +1,4 @@
-from hydralit import HydraApp
+from Widget.Hydralit import HydraApp
 import streamlit as st
 from datasearch import datasearchApp
 from datainput import datainputApp
