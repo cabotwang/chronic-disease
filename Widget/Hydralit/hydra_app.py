@@ -3,7 +3,7 @@ import streamlit as st
 from datetime import datetime, timedelta, timezone
 from Widget.Hydralit.sessionstate import SessionState
 from Widget.Hydralit.loading_app import LoadingApp
-import Widget.hydralit_components as hc
+import hydralit_components as hc
 from Widget.Hydralit.wrapper_class import Templateapp
 
 class HydraApp(object):
