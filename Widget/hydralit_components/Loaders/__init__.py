@@ -1,1 +1,1 @@
-from hydralit_components.Loaders.loaders import HyLoader, Loaders
+from Widget.hydralit_components.Loaders.loaders import HyLoader, Loaders

@@ -2,7 +2,7 @@ import os
 import streamlit.components.v1 as components
 import datetime
 
-from hydralit_components import IS_RELEASE
+from Widget.hydralit_components import IS_RELEASE
 
 if IS_RELEASE:
     absolute_path = os.path.dirname(os.path.abspath(__file__))

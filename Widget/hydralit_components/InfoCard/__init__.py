@@ -2,7 +2,7 @@ import os
 import streamlit as st
 import uuid
 import streamlit.components.v1 as components
-from hydralit_components import IS_RELEASE
+from Widget.hydralit_components import IS_RELEASE
 
 
 if IS_RELEASE:

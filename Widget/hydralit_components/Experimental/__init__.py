@@ -1,1 +1,1 @@
-from hydralit_components.Experimental.experiments import hydralit_experimental
+from Widget.hydralit_components.Experimental.experiments import hydralit_experimental
