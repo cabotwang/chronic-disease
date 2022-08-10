@@ -1,4 +1,4 @@
-from hydralit import HydraHeadApp
+from Widget.Hydralit import HydraHeadApp
 import streamlit as st
 import pandas as pd
 from deta import Deta
