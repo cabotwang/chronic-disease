@@ -89,7 +89,6 @@ class datasearchApp(HydraHeadApp):
                     st.session_state.episode_button_clicked = True
                     st.experimental_rerun()
         else:
-            info_need = info[]
             c1, ce = st.columns([0.8, 3])
             c1.markdown('<p class="label-font2">患者查询 > 病情信息</p>', unsafe_allow_html=True)
             st.markdown('<p class="label-font">个人基础信息</p>', unsafe_allow_html=True)
