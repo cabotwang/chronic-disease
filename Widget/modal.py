@@ -48,9 +48,9 @@ def container(key, title=None, padding=100):
             background-color: #ffffff;     
             margin: auto;
             padding: """ + str(padding) + """px;
-            margin-top: """ + str(padding) + """px;
+            margin-top: """ + str(2* padding) + """px;
             margin-left: -""" + str(padding) + """px;
-            margin-bottom: -""" + str(2 * padding) + """px;
+            margin-bottom: -""" + str(padding) + """px;
             z-index: 1001;
             border-radius: 20px;
         }

@@ -83,29 +83,9 @@ class datainputApp(HydraHeadApp):
         tab1, tab2, tab3, tab4 = st.tabs(['症状体征', '体格检查', '影像学检查', '既往病史'])
 
         # 症状体征
-        with tab1:
-            df = pd.DataFrame(get_data_sym(), columns=['症状', '程度', '类型', '持续时间（周）', '平均发作时长（小时）',
-                                                       '发作频次（次/周）', '录入时间'])
-            df.index = df.index + 1
-            df = df.where(df.notnull(), '')
-            c0, c1, c2, ce = st.columns([0.3, 0.3, 0.6, 6])
-            sym_add = c0.button('增加', key='symptom_add')
-            sym_delete = c1.button('删除', key='symptom_delete')
-            sym_clear = c2.button('清除列表', key='symptom_clear')
-            selected = interactive_table(df, 'sym_df')
-            if sym_add:
-                modal.open('sym_add_modal')
-            if sym_delete:
-                print(get_data_sym())
-                print(selected["selected_rows"][0])
-                for i in get_data_sym():
-                    if set(i.items()).issubset(selected["selected_rows"][0].items()):
-                        get_data_sym().remove(i)
-                st.experimental_rerun()
-            if sym_clear:
-                get_data_sym().clear()
-                st.experimental_rerun()
-
+        print('1')
+        df_sym = pd.DataFrame(get_data_sym(), columns=['症状', '程度', '类型', '持续时间（周）', '平均发作时长（小时）',
+                                                     '发作频次（次/周）', '录入时间'])
         if modal.is_open('sym_add_modal'):
             with modal.container('sym_add_modal'):
                 st.markdown('<p class="label-font">增加症状信息</p>', unsafe_allow_html=True)
@@ -170,6 +150,27 @@ class datainputApp(HydraHeadApp):
                             counter += 1
                         modal.close('sym_add_modal')
                         st.experimental_rerun()
+
+        with tab1:
+            st.write(st.session_state)
+            df_sym.index = df_sym.index + 1
+            df_sym = df_sym.where(df_sym.notnull(), '')
+            c0, c1, c2, ce = st.columns([0.3, 0.3, 0.6, 6])
+            sym_add = c0.button('增加', key='symptom_add')
+            sym_delete = c1.button('删除', key='symptom_delete')
+            sym_clear = c2.button('清除列表', key='symptom_clear')
+            selected_sym = interactive_table(df_sym, 'sym_df')
+            if sym_add:
+                modal.open('sym_add_modal')
+            if sym_delete:
+                for i in get_data_sym():
+                    if set(i.items()).issubset(selected_sym["selected_rows"][0].items()):
+                        get_data_sym().remove(i)
+                st.experimental_rerun()
+            if sym_clear:
+                get_data_sym().clear()
+                st.experimental_rerun()
+
 
         # 体格检查
         with tab2:
