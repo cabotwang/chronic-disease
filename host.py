@@ -10,7 +10,7 @@ for line in open('style.css', encoding='utf-8'):
     st.markdown(f'<style>{line}</style>', unsafe_allow_html=True)
 
 if __name__ == '__main__':
-    st.title('来宾个案管理平台')
+
     app = HydraApp(title='慢病管理平台', favicon="🏠", navbar_theme={'menu_background':'royalblue'})
     app.add_app("我的病人", icon="📚", app=datasearchApp())
     app.add_app("院前信息采集", icon="⌨", app=datainputApp())
